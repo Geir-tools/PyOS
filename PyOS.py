@@ -1,4 +1,4 @@
-### PyOS 0.0.2.0###
+### PyOS 0.0.6.0 ###
 ######################
 print("Importing...")#
 import os            #
@@ -9,6 +9,8 @@ import re            #
 import shutil        #
 import hashlib       #
 import platform      #
+import glob          #
+import urllib.request#
 ######################
 #CREDIT#
 #General Coding - Sam Forrester
@@ -22,7 +24,7 @@ global pyos_aun
 global pyver
 global code
 code = 'pyosenckey'
-pyos_ver = str("PyOS 0.0.2.0")
+pyos_ver = str("PyOS 0.0.6.0")
 pyos_osn = getpass.getuser()
 pyver = platform.python_version()
 if not ("3.4") in pyver:
@@ -34,8 +36,8 @@ if not ("3.4") in pyver:
 print("[  OK  ] Supported Python Version")
 pyos_aun = getpass.getuser()
 os.system("title " + pyos_ver)
-if os.path.exists("PyOS_RM.py"):
-    os.remove("PyOS_RM.py")
+if os.path.exists("UpdateClient.py"):
+    os.remove("UpdateClient.py")
 def pyos_boot():
     if os.path.exists("PyOS_Data"):
         os.chdir("PyOS_Data")
@@ -195,8 +197,11 @@ def pyos_set():
     if not os.path.exists(pyos_osn):
         os.mkdir(pyos_osn)
         os.chdir(pyos_osn)
+        os.mkdir('appdata')
     if os.path.exists(pyos_osn):
         os.chdir(pyos_osn)
+        if not os.path.exists("appdata"):
+            os.mkdir('appdata')
     os.system("@mode con cols=50 lines=34")
     print("##################################################")
     print("")
@@ -248,8 +253,82 @@ def pyos_setps():
         os.system("pause >nul")
         pyos_setps()
 def pyos_prog():
-    print("Not Implemented Yet.")
-    os.system("pause")
+    os.system("cls")
+    print("##################################################")
+    print("PyOS Apps")
+    if not os.path.exists("appdata"):
+        os.mkdir('appdata')
+    os.chdir("appdata")
+    avapps = glob.glob("*.py")
+    avapps.extend(glob.glob("*.exe"))
+    maxnum = len(avapps)
+    maxnumext = maxnum + 5
+    maxnumstr = str(maxnumext)
+    print("")
+    for number, letter in enumerate(avapps):
+        trnu = number + 1
+        trnus = str(trnu)
+        letterm = letter.replace(".py", "")
+        letterm = letterm.replace(".exe", "")
+        print(trnus + ":", letterm)
+    print("")
+    print("Enter number of the app you want to start,")
+    print("or type 'ext' to go back to terminal.")
+    startapp = input("")
+    if startapp == ("ext"):
+        os.chdir('..')
+        if pyos_osn == pyos_aun:
+            pyos_os_ad()
+        else:
+            pyos_os_us()
+    if re.match("^[A-Za-z]*$", startapp):
+        print("Please only use numbers!")
+        os.system("pause >nul")
+        os.chdir('..')
+        pyos_prog()
+    startapp = int(startapp)
+    startapp = startapp - 1
+    if startapp < 0:
+        print("Invalid choice!")
+        os.system("pause")
+        os.chdir('..')
+        pyos_prog()
+    if startapp < maxnum:
+        appcc = avapps[startapp]
+        appccx = appcc.replace(".py", "")
+        appccx = appcc.replace(".exe", "")
+        print("What would you like to do?")
+        print("[s]tart app")
+        print("[u]ninstall app")
+        appccd = input("")
+        if appccd == ("s"):
+            print("Starting " + appccx)
+            os.startfile(appcc)
+            os.chdir('..')
+            pyos_prog()
+        elif appccd == ("u"):
+              print("Deleting...")
+              try:
+                 os.remove(appcc)
+                 print("Deleted!")
+                 os.system("pause")
+                 os.chdir('..')
+                 pyos_prog()
+              except:
+                  print("Could not delete.")
+                  os.system("pause")
+                  os.chdir('..')
+                  pyos_prog()
+        else:
+              print("Cancelled.")
+              os.system("pause")
+              os.chdir('..')
+              pyos_prog()
+    else:
+        print("Invalid choice!")
+        os.system("pause")
+        os.chdir('..')
+        pyos_prog()
     pyos_os_us()
 def pyos_mus():
           os.system("pause")
@@ -348,7 +427,7 @@ def pyos_os_us():
             print("Please log in as " + pyos_aun + " for administrator tools.")
             pyos_os_us()
     else:
-        print("Bad Input!")
+        print(os_input)
         pyos_os_us()
 def pyos_update():
     if os.path.exists("UpdateClient.py"):
@@ -390,6 +469,7 @@ def pyos_os_ad():
         print("ext - Exits")
         print("lgt - Logs out of account")
         print("app - Displays list of available apps")
+        print(" ~~Type 'app [appname]' to launch direct")
         print("cls - Clears screen")
         print("enc - Encryption Tool")
         print("dnc - Read Encrypted Files")
@@ -397,8 +477,9 @@ def pyos_os_ad():
         print("rdf - Read Files")
         print("upd - Check For Update")
         print("cmd - Command Prompt")
-        print("ipc - IPConfig Shortcut")
+        print("ist - Install Apps")
         print("run - Run Files")
+        print(" ~~Type 'run [file] to launch direct")
         os.system("pause")
         pyos_os_ad()
     elif os_input == ("ext"):
@@ -407,8 +488,20 @@ def pyos_os_ad():
         print("Logging out...")
         os.system("pause >nul")
         pyos_login()
-    elif os_input == ("app"):
-        pyos_prog()
+    elif ("app") in os_input:
+        os_in_app = os_input.replace("app ", "")
+        try:
+            os.chdir("appdata")
+            os_in_app = (os_in_app + ".py")
+            os.startfile(os_in_app)
+            os.chdir('..')
+        except:
+            print("No app named " + os_in_app)
+            os.system("pause >nul")
+            os.chdir('..')
+            pyos_prog()
+        print("Launching " + os_in_app)
+        pyos_os_ad()
     elif os_input == ("cls"):
         os.system("cls")
         print("##################################################")
@@ -527,8 +620,38 @@ def pyos_os_ad():
                     print("File not found!")
                     pyos_os_ad()
             pyos_os_ad()
+    elif os_input == ("ist"):
+        print("Enter name of app to download (Do not include filetypes).")
+        appinst = input("")
+        appinst = (appinst + ".py")
+        appinstlk = ('https://raw.githubusercontent.com/SimLoads/PyOS/pyos_apps/' + appinst)
+        try:
+            update = urllib.request.Request(appinstlk)
+            response = urllib.request.urlopen(update) 
+            newcode = response.read() 
+            master = newcode.decode()
+        except:
+            print("Could not find app!")
+            print("To see list of apps, go to...")
+            print("https://github.com/SimLoads/PyOS/tree/pyos_apps")
+            os.system("pause")
+            pyos_os_ad()
+        print("Downloaded!")
+        print("Installing...")
+        if os.path.exists("appdata"):
+            os.chdir('appdata')
+        else:
+            os.mkdir('appdata')
+            os.chdir('appdata')
+        with open(appinst, 'w', encoding='utf-8') as app:
+            app.write(master)
+        print("Installed!")
+        app.close()
+        os.chdir('..')
+        os.system("pause")
+        pyos_os_ad()
     else:
-        print("Bad Input!")
+        print(os_input)
         pyos_os_ad()
 def pyos_adm_cmd():
     pyos_cmd_dr = os.getcwd()
