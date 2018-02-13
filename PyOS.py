@@ -1,4 +1,4 @@
-### PyOS 0.0.6.0 ###
+### PyOS 0.0.6.2 ###
 ######################
 print("Importing...")#
 import os            #
@@ -24,7 +24,7 @@ global pyos_aun
 global pyver
 global code
 code = 'pyosenckey'
-pyos_ver = str("PyOS 0.0.6.0")
+pyos_ver = str("PyOS 0.0.6.2")
 pyos_osn = getpass.getuser()
 pyver = platform.python_version()
 if not ("3.4") in pyver:
@@ -347,7 +347,6 @@ def pyos_os_us():
         print("dnc - Read Encrypted Files")
         print("typ - Word Processor")
         print("rdf - Read Files")
-        print("upd - Check For Update")
         print("adm - Switch To Administrator")
         os.system("pause")
         pyos_os_us()
@@ -372,8 +371,7 @@ def pyos_os_us():
     elif os_input == ("dnc"):
         pyos_dnc()
     elif os_input == ("typ"):
-        os.system("cls")
-        print("##################################################")
+        print("###")
         print("Start typing to begin...")
         pyos_word = input("")
         print("")
@@ -386,13 +384,9 @@ def pyos_os_us():
                 pw.write(pyos_wordb)
         except:
             print("Failed to save.")
-            os.system("pause >nul")
-            os.system("cls")
             pyos_os_us()
         print("Saved!")
         pw.close()
-        os.system("pause >nul")
-        os.system("cls")
         pyos_os_us()
     elif os_input == ("rdf"):
         print("Enter file name to open (Do not include filetype).")
@@ -405,19 +399,12 @@ def pyos_os_us():
                 for line in pr:
                     datat = line.decode('ascii')
                     print(datat)
-                    os.system("pause >nul")
                     pr.close()
                     pyos_os_us()
                     
         else:
             print("File not found!")
-            os.system("pause >nul")
             pyos_os_us()
-    elif os_input == ("upd"):
-        print("Checking for update...")
-        os.chdir('..')
-        os.chdir('..')
-        pyos_update()
     elif os_input == ("adm"):
         if pyos_osn == pyos_aun:
             print("Switched to admin!")
@@ -427,7 +414,7 @@ def pyos_os_us():
             print("Please log in as " + pyos_aun + " for administrator tools.")
             pyos_os_us()
     else:
-        print(os_input)
+        print(os_input + " - Bad Input")
         pyos_os_us()
 def pyos_update():
     if os.path.exists("UpdateClient.py"):
@@ -489,6 +476,8 @@ def pyos_os_ad():
         os.system("pause >nul")
         pyos_login()
     elif ("app") in os_input:
+        if os_input == ("app"):
+            pyos_prog()
         os_in_app = os_input.replace("app ", "")
         try:
             os.chdir("appdata")
@@ -497,10 +486,9 @@ def pyos_os_ad():
             os.chdir('..')
         except:
             print("No app named " + os_in_app)
-            os.system("pause >nul")
             os.chdir('..')
-            pyos_prog()
-        print("Launching " + os_in_app)
+            pyos_os_ad()
+        print("Launched " + os_in_app)
         pyos_os_ad()
     elif os_input == ("cls"):
         os.system("cls")
@@ -515,8 +503,8 @@ def pyos_os_ad():
     elif os_input == ("dnc"):
         pyos_dnc()
     elif os_input == ("typ"):
-        os.system("cls")
-        print("##################################################")
+        print("")
+        print("###")
         print("Start typing to begin...")
         pyos_word = input("")
         print("")
@@ -529,13 +517,9 @@ def pyos_os_ad():
                     pw.write(pyos_wordb)
             except:
                 print("Failed to save.")
-                os.system("pause >nul")
-                os.system("cls")
                 pyos_os_ad()
             print("Saved!")
             pw.close()
-            os.system("pause >nul")
-            os.system("cls")
             pyos_os_ad()
         else:
             pyos_wordb = pyos_word.encode()
@@ -545,13 +529,9 @@ def pyos_os_ad():
                     pw.write(pyos_wordb)
             except:
                 print("Failed to save.")
-                os.system("pause >nul")
-                os.system("cls")
                 pyos_os_ad()
             print("Saved!")
             pw.close()
-            os.system("pause >nul")
-            os.system("cls")
             pyos_os_ad()
     elif os_input == ("rdf"):
         print("Enter file name to open.")
@@ -564,13 +544,11 @@ def pyos_os_ad():
                     for line in pr:
                         datat = line.decode('ascii')
                         print(datat)
-                        os.system("pause >nul")
                         pr.close()
                         pyos_os_ad()
                         
             else:
                 print("File not found!")
-                os.system("pause >nul")
                 pyos_os_ad()
         else:
             pyos_read_txt = (pyos_read + ".txt")
@@ -581,13 +559,11 @@ def pyos_os_ad():
                     for line in pr:
                         datat = line.decode('ascii')
                         print(datat)
-                        os.system("pause >nul")
                         pr.close()
                         pyos_os_ad()
                         
             else:
                 print("File not found!")
-                os.system("pause >nul")
                 pyos_os_ad()
     elif os_input == ("upd"):
         print("Checking for update...")
@@ -648,10 +624,9 @@ def pyos_os_ad():
         print("Installed!")
         app.close()
         os.chdir('..')
-        os.system("pause")
         pyos_os_ad()
     else:
-        print(os_input)
+        print(os_input + " - Bad Input")
         pyos_os_ad()
 def pyos_adm_cmd():
     pyos_cmd_dr = os.getcwd()
@@ -717,11 +692,12 @@ def pyos_enc():
                     print("Encrypted!")
                     os.chdir('..')
                     os.remove(pyos_enc_file_txt)
-                    os.system("pause >nul")
-                    pyos_os_us()
+                    if pyos_osn == pyos_aun:
+                        pyos_os_ad()
+                    else:
+                        pyos_os_us()
     else:
         print("File not found!")
-        os.system("pause >nul")
         if pyos_osn == pyos_aun:
             pyos_os_ad()
         else:
