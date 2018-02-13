@@ -1,4 +1,4 @@
-### Pytunes Version 1.1.1.2 ###
+### Pytunes Version 1.1.1.2 PyOS ###
 # Hi user! Welcome to PyTunes! This is a fully standalone media player
 # coded entirely in Python3. Only works in windows for now, I'm working on
 # a linux edition. Hope you enjoy using it!
@@ -118,6 +118,13 @@
 #   PyOS is currently in development and you can pick up the latest version on my github.
 #   Feel free to continue using PyTunes as is, but soon it will be part of a much larger thing!
 # - Also bug fixes :)
+#####
+# Changelog 13/02/18 - Ver 1.1.1.2 PyOS R1
+# - PyTunes for PyOS Released - this version is a super stripped down version of the original program.
+# - Password checks removed as PyOS will do all of that beforehand
+# - No need for a settings menu anymore
+# - No more setup or login
+#
 #
 ####################### Total modules: 13
 print("Importing...") #
@@ -142,7 +149,7 @@ print("Import OK!")   #
 ####################### U S E R C H E C K #######################
 os.system("@mode con cols=130 lines=34")
 global programversion
-programversion = str("PyTunes 1.1.1.2 Release 1 'Tonic'")
+programversion = str("PyTunes for PyOS 1.1.1.2 'Tonic'")
 global todaysongs
 todaysongs = []
 os.system("title " + programversion)
@@ -150,162 +157,64 @@ def usercheck():
     print("[SC] User Check...")
     time.sleep(0.1)
     curdrs = os.getcwd()
-    if os.path.exists("userfvg.pyd"):
-        print("[OK] userfvg.pyd exists")
-        global currentlyplaying
-        currentlyplaying = ("Nothing")
-        print("[OK] Song variable declared")
-        print("[SC] Removing update files...")
-        if os.path.exists("updatemanager.py"):
-            os.remove("updatemanager.py")
-        if os.path.exists("update.pyd"):
-            os.remove("update.pyd")
-        print("[OK] Done")
-        print("[SC] Error Check...")
-        time.sleep(0.1)
-        if os.path.exists("userps2.pyd"):
-            print("[FAIL] Error!")
-            if os.path.exists("err.ogg"):
-                pygame.mixer.music.load("err.ogg")
-                pygame.mixer.music.play()
-            time.sleep(0.5)
-            print("[FAIL] Collecting Data...")
-            time.sleep(1)
-            os.system("cls")
-            os.remove("userps.pyd")
-            with open("userps2.pyd", 'r') as p:
-                for lineusn in p:
-                    with open("userps.pyd", 'w') as r: 
-                        r.write(lineusn)
-                        r.close()
-                        p.close()
-                        os.remove("userps2.pyd")
-                        print(programversion)
-                        print("0_0")
-                        print("")
-                        print("PyTunes ran into a problem and had to restart.")
-                        print("If you contact the developer, please quote error code S2PDxE")
-                        print("Your password has been changed to the one you entered.")
-                        print("Please press any key to restart.")
-                        os.system("pause >nul")
-                        os.chdir('..')
-                        os.startfile("PyTunes.py")
-                        exit()
-        else:
-            print("[OK] userps2.pyd does not exist")
-            print("[SC] Confirming User...")
-            if not os.path.exists("username.pyd"):
-                print("[FAIL] Error!")
-                if os.path.exists("err.ogg"):
-                    pygame.mixer.music.load("err.ogg")
-                    pygame.mixer.music.play()
-                time.sleep(0.5)
-                print("[FAIL] Collecting Data...")
-                time.sleep(1)
-                os.system("cls")
-                if os.path.exists("userfvg.pyd"):
-                    os.remove("userfvg.pyd")
-                if os.path.exists("userfva.pyd"):
-                    os.remove("userfva.pyd")
-                if os.path.exists("userps.pyd"):
-                    os.remove("userps.pyd")
-                if os.path.exists("userdob.pyd"):
-                    os.remove("userdob.pyd")
-                print(programversion)
-                print("0_0")
-                print("")
-                print("PyTunes ran into a problem and had to restart.")
-                print("If you contact the developer, please quote error code S3DAxE")
-                print("Your password has been changed to the one you entered.")
-                print("Please press any key to restart.")
-                os.system("pause >nul")
-                exit()
-            else:
-                print("[OK] No account deletion fails detected")
-                print("[SC] Ensuring all files are locked...")
-                os.system("attrib +s +h username.pyd")
-                os.system("attrib +s +h userdob.pyd")
-                os.system("attrib +s +h userps.pyd")
-                os.system("attrib +s +h userfva.pyd")
-                os.system("attrib +s +h userfvg.pyd")
-                if os.path.exists("err.ogg"):
-                    os.system("attrib +s +h err.ogg")
-                if os.path.exists("iserrorskipon.pyd"):
-                    os.system("attrib +s +h iserrorskipon.pyd")
-                print("[OK] Attributed 'hidden' to all data files")
-                print("[SC] Processing Songs...")
-                presonglist = glob.glob("*.mp3")
-                presonglist.extend(glob.glob("*.wav"))
-                le = len(presonglist)
-                prelestr = str(le)
-                print("[OK] " + prelestr + " Songs [With Usable Formats] Found!")
-                print("[OK] Songs Processed")
-                print("[SC] Checking for update...")
-                update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyTunes.py/master/PyTunes.py') 
-                response = urllib.request.urlopen(update) 
-                newcode = response.read() 
-                master = newcode.decode()
-                os.chdir('..')
-                os.system("type PyTunes.py >> update2.pyd")
-                os.system("attrib +s +h update2.pyd")
-                with open('update.pyd', 'w') as u: 
-                    u.write(master)
-                    os.system("attrib +s +h update.pyd")
-                    u.close
-                with open('update.pyd', 'r') as u:
-                    with open('update2.pyd', 'r') as r:
-                        for lineu in u:
-                            for liner in r:
-                                print("[SC] Current Verison - ", liner)
-                                print("[SC] Server Verison - ", lineu)
-                                if (lineu) == (liner):
-                                    print("[OK] No update needed!")
-                                    u.close()
-                                    r.close()
-                                    os.remove("update.pyd")
-                                    os.remove("update2.pyd")
-                                    os.chdir(curdrs)
-                                    redboot()
-                                else:
-                                    print("[OK] Update Required!")
-                                    print("")
-                                    u.close()
-                                    r.close()
-                                    os.remove("update.pyd")
-                                    os.remove("update2.pyd")
-                                    os.system("pause")
-                                    updatecheck()
-    if not os.path.exists("userfvg.pyd"):
+    print("[OK]")
+    global currentlyplaying
+    currentlyplaying = ("Nothing")
+    print("[OK] Song variable declared")
+    print("[SC] Removing update files...")
+    if os.path.exists("updatemanager.py"):
+        os.remove("updatemanager.py")
+    if os.path.exists("update.pyd"):
+        os.remove("update.pyd")
+    print("[OK] Done")
+    time.sleep(0.1)
+    if os.path.exists("err.ogg"):
         os.system("attrib +s +h err.ogg")
+    if os.path.exists("iserrorskipon.pyd"):
         os.system("attrib +s +h iserrorskipon.pyd")
-        print("[OK] userfvg.pyd does not exist, assuming setup is required")
-        print("[OK] Ready to boot!")
-        if os.path.exists("deverb.pyd"):
-            print("Auto boot disabled...")
-            print("Waiting for user choice... [y/n/s]")
-            verbin = input("")
-            if verbin == ("y"):
-                menu1()
-            if verbin == ("n"):
-                exit()
-            if verbin == ("s"):
-                print("Skip setup? Crash is likely unless files have been manually created [y/n]")
-                verbinskip = input("")
-                if verbinskip == ("y"):
-                    menu2()
-                if verbinskip == ("n"):
-                    menu1()
-                else:
-                    menu2()
-            else:
-                print("Bad Input!")
-                print("Booting to setup...")
-                time.sleep(1)
-                menu1()
-        else:
-            print("Auto boot enabled...")
-            time.sleep(0.1)
-            menu1()
+    print("[OK] Attributed 'hidden' to all data files")
+    print("[SC] Processing Songs...")
+    presonglist = glob.glob("*.mp3")
+    presonglist.extend(glob.glob("*.wav"))
+    le = len(presonglist)
+    prelestr = str(le)
+    print("[OK] " + prelestr + " Songs [With Usable Formats] Found!")
+    print("[OK] Songs Processed")
+    print("[SC] Checking for update...")
+    update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/pyos_apps/PyTunes.py') 
+    response = urllib.request.urlopen(update) 
+    newcode = response.read() 
+    master = newcode.decode()
+    os.chdir('..')
+    os.system("type PyTunes.py >> update2.pyd")
+    os.system("attrib +s +h update2.pyd")
+    with open('update.pyd', 'w') as u: 
+        u.write(master)
+        os.system("attrib +s +h update.pyd")
+        u.close
+    with open('update.pyd', 'r') as u:
+        with open('update2.pyd', 'r') as r:
+            for lineu in u:
+                for liner in r:
+                    print("[SC] Current Verison - ", liner)
+                    print("[SC] Server Verison - ", lineu)
+                    if (lineu) == (liner):
+                        print("[OK] No update needed!")
+                        u.close()
+                        r.close()
+                        os.remove("update.pyd")
+                        os.remove("update2.pyd")
+                        os.chdir(curdrs)
+                        redboot()
+                    else:
+                        print("[OK] Update Required!")
+                        print("")
+                        u.close()
+                        r.close()
+                        os.remove("update.pyd")
+                        os.remove("update2.pyd")
+                        os.system("pause")
+                        updatecheck()
 def redboot():
     print("[OK] Ready to boot!")
     if os.path.exists("deverb.pyd"):
@@ -347,143 +256,6 @@ def boot():
     menu2()
 ####################### U S E R C H E C K #######################
 
-    
-#############################################################
-
-
-####################### S E T U P #######################
-def menu1():
-    os.system("@mode con cols=100 lines=34")
-    os.system("cls")
-    time.sleep(0.1)
-    print("######################")
-    time.sleep(0.1)
-    print("# |--|\- -/          #")
-    time.sleep(0.1)
-    print("# | _| \|/           #")
-    time.sleep(0.1)
-    print("# |_|  |_| T U N E S #")
-    time.sleep(0.1)
-    print("######################")
-    time.sleep(0.1)
-    print("")
-    global trueusernm
-    trueusernm = getpass.getuser()
-    username = input("Welcome to PyTunes, " + trueusernm + "! We see this is your first time, so please enter your name: ")
-    print("")
-    for i in range(5):
-        userps = input("Enter a password for your account: ")
-        if userps == (""):
-            print("Passwords cannot be 0 characters!")
-            os.system("pause >nul")
-            menu1()
-        if not re.match("^[0-9A-Za-z]*$", userps):
-            print("Illegal Characters! Please only use a-Z and 0-9.")
-            os.system("pause >nul")
-            menu1()
-        elif len(userps) < 4:
-            print("Error! Password too short! Please make it over 4 characters.")
-            os.system("pause >nul")
-            menu1()
-        else:
-            print("")
-            userpsche = input("Re-enter your password: ")
-            if userpsche == userps:
-                print("Password accepted!")
-                print("")
-                userdob = input("Please enter the year you were born (YYYY): ")
-                print("")
-                with open("username.pyd", 'w') as f:
-                    f.write(username)
-                with open("userdob.pyd", 'w') as f:
-                    f.write(userdob)
-                with open("userps.pyd", 'w') as f:
-                    f.write(userps)
-                f.close()    
-                setup()
-            else:
-                print("Passwords do not match!")
-def setup():
-    dircheck = input("Would you like PyTunes to check your songs library for music? [y/n] ")
-    if dircheck == ("y"):
-        global curdr
-        curdr = os.getcwd()
-        os.chdir("C:/Users/" + trueusernm + "/Music")
-        songlist_copy = glob.glob("*.mp3")
-        songlist_copy.extend(glob.glob("*.wav"))
-        if songlist_copy == (""):
-            print("No Files Found!")
-            os.system("pause >nul")
-            setupbreak()
-        else:
-            print("Found these songs...")
-            maxnum = len(songlist_copy)
-            maxnumext = maxnum + 5
-            maxnumstr = str(maxnumext)
-            os.system("@mode con cols=130 lines=" + maxnumstr)
-            print("")
-            for number, letter in enumerate(songlist_copy):
-                trnu = number + 1
-                trnus = str(trnu)
-                letterm = letter.replace(".mp3", "")
-                lettermm = letterm.replace(".wav", "")
-                print(trnus + ":", lettermm)
-            print("")
-            print("Press any key to copy (Existing songs will be skipped) ")
-            os.system("pause >nul")
-            os.system("@mode con cols=130 lines=34")
-            print("Copying...")
-            dstsong = (curdr)
-            srcsong = ("C:/Users/" + trueusernm + "/Music")
-            for songlist_copy in songlist_copy:
-                local = songlist_copy.split('"')
-                dst_file_path = "%s\%s" % (dstsong,local[0])
-                (root,file_name) = os.path.splitext(dst_file_path)
-                src_file_path = os.path.normcase("%s/%s" % (srcsong,local[0]))
-                shutil.copyfile(src_file_path,dst_file_path)
-                print("Copying " + "" + local[0])
-            print("Copied!")
-            os.system("@mode con cols=130 lines=34")
-            print("")
-            os.chdir(curdr)
-            setupbreak()
-    else:
-        setupbreak()
-def setupbreak():
-    userfva = input("Enter your favourite music artist: ")
-    with open("userfva.pyd", 'w') as f:
-        f.write(userfva)
-        f.close() 
-        setupcont()
-def setupcont():
-    print("")
-    userfvg = input("Enter your favourite genre of music: ")
-    with open("userfvg.pyd", 'w') as f:
-        f.write(userfvg)
-        print("")
-        print("Finishing Up...")
-        global currentlyplaying
-        currentlyplaying = ("Nothing")
-        print("")
-        print("Setup complete! Going to main menu...")
-        print("")
-        time.sleep(1)
-        f.close()
-        dr = os.getcwd()
-        time.sleep(0.1)
-        os.system("attrib +s +h username.pyd")
-        time.sleep(0.1)
-        os.system("attrib +s +h userdob.pyd")
-        time.sleep(0.1)
-        os.system("attrib +s +h userps.pyd")
-        time.sleep(0.1)
-        os.system("attrib +s +h userfva.pyd")
-        time.sleep(0.1)
-        os.system("attrib +s +h userfvg.pyd")
-        time.sleep(0.1)
-        menu2()
-####################### S E T U P #######################
-
 
 #########################################################
         
@@ -497,40 +269,10 @@ def menu2():
     print("# |_|  |_| T U N E S #")
     print("######################")
     print("")
-    n = int(3)
-    if os.path.exists("username.pyd"):
-        with open("username.pyd", 'r') as f:
-            for lineus in f:
-                pswrd = getpass.getpass("Welcome back to PyTunes, " + lineus + "! Enter your password to continue... ")
-        for loginloop in range(3):
-            with open("userps.pyd", 'r') as f:
-                for lineps in f:
-                    if (pswrd) == (lineps):
-                        print("Login Successful.")
-                        os.system("pause >nul")
-                        f.close()   
-                        menu2c()
-                    else:
-                        time.sleep(2)
-                        print("Could not verify password. Try Again...")
-                        if os.path.exists("err.ogg"):
-                            pygame.mixer.music.load("err.ogg")
-                            pygame.mixer.music.play()
-                        pswrd = getpass.getpass("Password: ")
-    else:
-        if os.path.exists("userfvg.pyd"):
-            os.remove("userfvg.pyd")
-        if os.path.exists("userfva.pyd"):
-            os.remove("userfva.pyd")
-        if os.path.exists("userps.pyd"):
-            os.remove("userps.pyd")
-        if os.path.exists("userdob.pyd"):
-            os.remove("userdob.pyd")
-        print(programversion)
-        print("An error has occured. If you contact the developer, please quote error code LxFExF")
-        print("Press any key to restart.")
-        os.system("pause >nul")
-        exit()
+    trueusernm = getpass.getuser()
+    print("Welcome to PyTunes, " + trueusernm + "!")
+    os.system("pause")
+    menu2c()
 ####################### L O G I N #######################
 
 
@@ -548,8 +290,7 @@ def menu2c():
     print("")
     print("1} Songs Library")
     print("2} Playlists")
-    print("3} Settings")
-    print("4} Log Out")
+    print("3} Exit")
     print("Enter either 1, 2, 3 or 4 depending on what you want to do.")
     print("")
     menuch = input("")
@@ -558,12 +299,10 @@ def menu2c():
     if menuch == ("2"):
         playlistsli()
     if menuch == ("3"):
-        settingsli()
-    if menuch == ("4"):
-        print("Logging out...")
+        print("Exiting...")
         os.system("pause >nul")
         pygame.mixer.music.stop()
-        menu2()
+        exit()
     else:
         print("Bad Input! Please enter either 1, 2, 3 or 4 to naviagte to the selected menu.")
         os.system("pause >nul")
@@ -1015,95 +754,6 @@ def createpl2():
 
         
 #######################  S E T T I N G S  ####################### 
-def settingsli():
-    os.system("cls")
-    print("######################")
-    print("# |--|\-_-/          #")
-    print("# | _| \|/           #")
-    print("# |_|  |_| T U N E S #")
-    print("######################")
-    time.sleep(0.02)
-    os.system("cls")
-    print("# |--|\-_-/          #")
-    print("# | _| \|/           #")
-    print("# |_|  |_| T U N E S #")
-    print("######################")
-    time.sleep(0.02)
-    os.system("cls")
-    print("# | _| \|/           #")
-    print("# |_|  |_| T U N E S #")
-    print("######################")
-    time.sleep(0.02)
-    os.system("cls")
-    print("# |_|  |_| T U N E S #")
-    print("######################")
-    time.sleep(0.02)
-    os.system("cls")
-    print("######################")
-    time.sleep(0.02)
-    print("Settings")
-    print("")
-    print("1} See User Information")
-    print("2} Change Password")
-    print("3} Delete Account")
-    print("4} Update Program")
-    print("5} Go Back")
-    print("")
-    settingsch = input("")
-    if settingsch == ("1"):
-        pswrdui = getpass.getpass("Enter your account password... ")
-        with open("userps.pyd", 'r') as f:
-            for lineps in f:
-                if (pswrdui) == (lineps):
-                    print("Login Successful.")
-                    time.sleep(1)
-                    userinfo()
-                else:
-                    print("Incorrect Password!")
-                    if os.path.exists("err.ogg"):
-                        pygame.mixer.music.load("err.ogg")
-                        pygame.mixer.music.play()
-                    os.system("pause >nul")
-                    settingsli()
-    if settingsch == ("2"):
-        pswdch()
-    if settingsch == ("3"):
-        pswrdui = getpass.getpass("Enter your account password... ")
-        with open("userps.pyd", 'r') as f:
-            for lineps in f:
-                if (pswrdui) == (lineps):
-                    f.close()
-                    print("Login Successful.")
-                    time.sleep(1)
-                    delacc()
-                else:
-                    print("Incorrect Password!")
-                    pygame.mixer.music.load("err.ogg")
-                    pygame.mixer.music.play()
-                    os.system("pause >nul")
-                    settingsli()
-    if settingsch == ("4"):
-        os.chdir('..')
-        updatecheck()
-    if settingsch == ("5"):
-        menu2c()
-    if settingsch == ("27"):
-        with open("username.pyd", 'r') as f:
-            for lineps in f:
-                if ("dev") == (lineps):
-                    f.close()
-                    print("")
-                    print("Hello Dev!")
-                    os.system("pause >nul")
-                    devoptions()
-                else:
-                    f.close()
-                    print("Bad Input! Please enter either 1, 2, 3 or 4 to naviagte.")
-                    os.system("pause >nul")
-                    settingsli()
-    else:
-        print("Bad Input! Please enter either 1, 2, 3 or 4 to naviagte.")
-        settingsli()
 def updatecheck():
     print("Starting update manager...")
     if os.path.exists("updatemanager.py"):
@@ -1115,7 +765,7 @@ def updatecheck():
         os.system("echo import urllib.request >> updatemanager.py")
         os.system("echo os.system('title PyTunes Update Manager') >> updatemanager.py")
         os.system("echo print('Collecting update from github...') >> updatemanager.py")
-        os.system("echo update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyTunes.py/master/PyTunes.py') >> updatemanager.py")
+        os.system("echo update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/pyos_apps/PyTunes.py') >> updatemanager.py")
         os.system("echo response = urllib.request.urlopen(update) >> updatemanager.py")
         os.system("echo newcode = response.read() >> updatemanager.py")
         os.system("echo master = newcode.decode() >> updatemanager.py")
@@ -1253,93 +903,6 @@ def errorsim():
         devoptions()
     else:
         devoptions()
-def delacc():
-    rand = random.randint(1,1001)
-    print("Please enter this number to prove you're not a robot: ", rand)
-    robche = int(input(""))
-    if (robche) == (rand):
-        print("Deleting account...")
-        time.sleep(2)
-        os.remove("username.pyd")
-        os.remove("userdob.pyd")
-        os.remove("userps.pyd")
-        os.remove("userfva.pyd")
-        os.remove("userfvg.pyd")
-        print("Restarting...")
-        time.sleep(2)
-        os.chdir('..')
-        os.startfile("PyTunes.py")
-        exit()
-    else:
-        print("Abort.")
-        pygame.mixer.music.load("err.ogg")
-        pygame.mixer.music.play()
-        os.system("pause >nul")
-        settingsli()
-def userinfo():
-    os.system("cls")
-    print("######################")
-    print("")
-    with open("username.pyd", 'r') as f:
-        for lineusn in f:
-            if ("dev") == (lineusn):
-                print("You are a developer. Access developer options by entering 27 in settings.")
-            else:
-                print("Username: " + lineusn)
-    with open("userdob.pyd", 'r') as f:
-        for linedb in f:
-            print("Date Of Birth: " + linedb)
-    with open("userps.pyd", 'r') as f:
-        for lineps in f:
-            print("Password: " + lineps)
-    with open("userfva.pyd", 'r') as f:
-        for linefva in f:
-            print("Favourite Artist: " + linefva)
-    with open("userfvg.pyd", 'r') as f:
-        for linefvg in f:
-            print("Favourite Genre: " + linefvg)
-    print("")
-    os.system("  pause>nul|set/p =Press anything to return to settings...")
-    settingsli()
-def pswdch():
-    pswrdcha = getpass.getpass("Enter your account password... ")
-    with open("userps.pyd", 'r') as f:
-        for lineps in f:
-            if (pswrdcha) == (lineps):
-                f.close()
-                os.system("attrib -s -h userps.pyd")
-                pwrdch()
-            else:
-                print("Incorrect Password!")
-                pygame.mixer.music.load("err.ogg")
-                pygame.mixer.music.play()
-                os.system("pause >nul")
-                settingsli()
-def pwrdch():
-    pswdch = getpass.getpass("Enter new password...")
-    pswdchv = getpass.getpass("Verify new password...")
-    if pswdch == pswdchv:
-        with open("userps2.pyd", 'w') as i:
-            i.write(pswdch)
-            i.close()
-            pwrewr()
-    else:
-        print("Passwords do not match!")
-        os.system("pause >nul")
-        settingsli()
-def pwrewr():
-    with open("userps2.pyd", 'r') as p:
-        for lineps in p:
-            os.remove("userps.pyd")
-            with open("userps.pyd", 'w') as a:
-                a.write(lineps)
-                os.system("attrib +s +h userps.pyd")
-                p.close()
-                a.close()
-                os.remove("userps2.pyd")
-                print("Password Changed Successfully!")
-                time.sleep(2)
-                settingsli()
 #######################  S E T T I N G S  #######################
 
 ####################################################################
