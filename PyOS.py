@@ -1,4 +1,4 @@
-### PyOS 0.0.8.4 ###
+###.PyOS.0.0.8.6.###
 ######################
 import os            
 os.system("cls")     
@@ -29,14 +29,16 @@ print("[  OK  ] Urllib.request")
 #######
 os.system("cls")
 global pyos_ver
+global pyos_iden_ver
 global pyos_osn
 global pyos_aun
 global pyver
 global code
 code = 'pyosenckey'
-pyos_ver = str("PyOS 0.0.8.4")
+pyos_ver = str("PyOS 0.0.8.6")
 pyos_osn = getpass.getuser()
 pyver = platform.python_version()
+pyos_iden_ver = ("###.PyOS.0.0.8.6.###")
 if not ("3.4") in pyver:
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.4.x")
@@ -114,6 +116,14 @@ def pyos_login():
     print("")
     print("")
     print("##################################################")
+    update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/master/PyOS.py')
+    response = urllib.request.urlopen(update)
+    newcode = response.read()
+    master = newcode.decode()
+    tvers = master.split(" ")
+    for number, line in enumerate(tvers):
+        tms = str(line)
+        break
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
     print("3} Create new user")
