@@ -1,4 +1,4 @@
-###.PyOS.0.0.8.6.### #
+###.PyOS.0.0.8.8.### #
 ######################
 import os            
 os.system("cls")     
@@ -35,10 +35,10 @@ global pyos_aun
 global pyver
 global code
 code = 'pyosenckey'
-pyos_ver = str("PyOS 0.0.8.6")
+pyos_ver = str("PyOS 0.0.8.8")
 pyos_osn = getpass.getuser()
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.8.6.###")
+pyos_iden_ver = ("###.PyOS.0.0.8.8.###")
 if not ("3.4") in pyver:
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.4.x")
@@ -124,6 +124,8 @@ def pyos_login():
     for number, line in enumerate(tvers):
         tms = str(line)
         break
+    if not tms == pyos_iden_ver:
+        print("An update is available.")
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
     print("3} Create new user")
