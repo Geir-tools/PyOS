@@ -1,17 +1,27 @@
-### PyOS 0.0.6.2 ###
+### PyOS 0.0.8.4 ###
 ######################
-print("Importing...")#
-import os            #
-import time          #
-import sys           #
-import getpass       #
-import re            #
-import shutil        #
-import hashlib       #
-import platform      #
-import glob          #
-import urllib.request#
-######################
+import os            
+os.system("cls")     
+print("Importing...")
+import time
+print("[  OK  ] Time")
+import sys
+print("[  OK  ] Sys")
+import getpass
+print("[  OK  ] Getpass")
+import re
+print("[  OK  ] Re")
+import shutil
+print("[  OK  ] Shutil")
+import hashlib
+print("[  OK  ] Hashlib")
+import platform
+print("[  OK  ] Platform")
+import glob
+print("[  OK  ] Glob")
+import urllib.request
+print("[  OK  ] Urllib.request")
+##################################
 #CREDIT#
 #General Coding - Sam Forrester
 #Encryption / Decryption code - https://www.blog.pythonlibrary.org/2016/05/18/python-3-an-intro-to-encryption/
@@ -24,7 +34,7 @@ global pyos_aun
 global pyver
 global code
 code = 'pyosenckey'
-pyos_ver = str("PyOS 0.0.6.2")
+pyos_ver = str("PyOS 0.0.8.4")
 pyos_osn = getpass.getuser()
 pyver = platform.python_version()
 if not ("3.4") in pyver:
@@ -150,23 +160,32 @@ def pyos_login():
             pyos_login()
     elif pyos_login_c == ("2"):
         os.chdir('..')
-        print("Enter the name of the user you want to switch to.")
+        dirs = os.listdir(os.getcwd())
+        print("")
+        for number, letter in enumerate(dirs):
+            trnu = number + 1
+            trnus = str(trnu)
+            print(trnus + ":", letter)
+        print("")
+        print("Enter the NAME of the user you want to switch to.")
         logswitch = input("")
         try:
             os.chdir(logswitch)
         except:
             print("User not found!")
-            os.system("pause")
+            os.system("pause >nul")
+            os.chdir(pyos_osn)
             pyos_login()
         if os.path.exists("data_pm.bin"):
             print("Switched to " + logswitch)
             global pyos_osn
             pyos_osn = (logswitch)
-            os.system("pause")
+            os.system("pause >nul")
             pyos_login()
         else:
             print("Invalid / Corrupted Account!")
             os.chdir('..')
+            os.system("pause >nul")
             pyos_login()
     elif pyos_login_c == ("3"):
         os.chdir('..')
@@ -175,7 +194,7 @@ def pyos_login():
         if os.path.exists(newusern):
             print("User already exists!")
             os.chdir(pyos_osn)
-            os.system("pause")
+            os.system("pause >nul")
             pyos_login()
         global pyos_osn
         pyos_osn = (newusern)
@@ -185,8 +204,12 @@ def pyos_login():
     elif pyos_login_c == ("cd"):
         pyos_tempcd = os.getcwd()
         print(pyos_tempcd)
-        os.system("pause")
+        os.system("pause >nul")
         pyos_login()
+    elif pyos_login_c == ("dev"):
+        print(devmess)
+        os.system("pause >nul")
+        pyos_cryfail()
     else:
         pyos_login()
 def pyos_set():
@@ -348,11 +371,14 @@ def pyos_os_us():
         print("typ - Word Processor")
         print("rdf - Read Files")
         print("adm - Switch To Administrator")
-        os.system("pause")
         pyos_os_us()
     elif os_input == ("ext"):
         exit()
     elif os_input == ("lgt"):
+        if pyos_osn == ("tmpacc"):
+            print("Exiting...")
+            os.system("pause >nul")
+            exit()
         print("Logging out...")
         os.system("pause >nul")
         pyos_login()
@@ -467,7 +493,8 @@ def pyos_os_ad():
         print("ist - Install Apps")
         print("run - Run Files")
         print(" ~~Type 'run [file] to launch direct")
-        os.system("pause")
+        print("lsf - List files")
+        print(" ~~Use 'lsfa' to return all filetypes")
         pyos_os_ad()
     elif os_input == ("ext"):
         exit()
@@ -540,13 +567,18 @@ def pyos_os_ad():
             if os.path.exists(pyos_read):
                 print(pyos_read + " Contains...")
                 print("")
-                with open(pyos_read, 'rb') as pr:
-                    for line in pr:
-                        datat = line.decode('ascii')
-                        print(datat)
-                        pr.close()
-                        pyos_os_ad()
-                        
+                try:
+                    with open(pyos_read, 'rb') as pr:
+                        for line in pr:
+                            try:
+                                datat = line.decode('ascii')
+                            except:
+                                print("Unable to open file.")
+                            print(datat)
+                except:
+                    print("Unable to open file.")
+                pr.close()
+                pyos_os_ad()
             else:
                 print("File not found!")
                 pyos_os_ad()
@@ -613,17 +645,79 @@ def pyos_os_ad():
             os.system("pause")
             pyos_os_ad()
         print("Downloaded!")
-        print("Installing...")
-        if os.path.exists("appdata"):
-            os.chdir('appdata')
-        else:
-            os.mkdir('appdata')
-            os.chdir('appdata')
-        with open(appinst, 'w', encoding='utf-8') as app:
-            app.write(master)
-        print("Installed!")
-        app.close()
-        os.chdir('..')
+        print("Install for who?")
+        print("[m]yself")
+        print("[o]ther user")
+        installin = input("")
+        if installin == ("m"):
+            print("Installing...")
+            if os.path.exists("appdata"):
+                os.chdir('appdata')
+            else:
+                os.mkdir('appdata')
+                os.chdir('appdata')
+            with open(appinst, 'w', encoding='utf-8') as app:
+                app.write(master)
+            print("Installed!")
+            app.close()
+            os.chdir('..')
+            pyos_os_ad()
+        if installin == ("o"):
+            print("Enter name of user to install for...")
+            userinstall = input("")
+            try:
+                os.chdir('..')
+                os.chdir(userinstall)
+            except:
+                print("User not found!")
+                pyos_os_ad()
+            print("Installing for " + userinstall)
+            if os.path.exists("appdata"):
+                os.chdir('appdata')
+            else:
+                os.mkdir('appdata')
+                os.chdir('appdata')
+            with open(appinst, 'w', encoding='utf-8') as app:
+                app.write(master)
+            print("Installed!")
+            app.close()
+            os.chdir('..')
+            os.chdir('..')
+            os.chdir(pyos_osn)
+            pyos_os_ad()
+    elif os_input == ("lsf"):
+        files = glob.glob("*.*")
+        encfiles = glob.glob("*")
+        print("")
+        print("Files found:")
+        for number, letter in enumerate(files):
+            trnu = number + 1
+            trnus = str(trnu)
+            if (".bin") in letter:
+                continue
+            print(letter)
+        print("")
+        print("Encrypted files found:")
+        for number, letter in enumerate(encfiles):
+            trnu = number + 1
+            trnus = str(trnu)
+            if not ("_enc") in letter:
+                continue
+            letter = letter.replace("_enc", "")
+            print(letter)
+        print("")
+        pyos_os_ad()
+    elif os_input == ("lsfa"):
+        filesa = glob.glob("*")
+        print("")
+        print("Files found:")
+        for number, letter in enumerate(filesa):
+            print(letter)
+        print("")
+        pyos_os_ad()
+    elif "echo" in os_input:
+        out = os_input.replace("echo ", "")
+        print(out)
         pyos_os_ad()
     else:
         print(os_input + " - Bad Input")
@@ -650,8 +744,8 @@ def pyos_enc():
     if os.path.exists(pyos_enc_file_txt):
         with open(pyos_enc_file_txt, 'rb') as pre:
             for line in pre:
-                print("Enter encryption passphrase.")
-                passph = input("")
+                print("Enter new encryption passphrase.")
+                passph = getpass.getpass("")
                 if passph == (""):
                     print("Passphrase must be more than 0 characters!")
                     os.system("pause >nul")
@@ -711,7 +805,7 @@ def pyos_dnc():
     if os.path.exists(pyos_dnc_file_enc):
         os.chdir(pyos_dnc_file_enc)
         print("Enter encryption passphrase.")
-        passph = input("")
+        passph = getpass.getpass("")
         with open('data.file.bin', 'rb') as fobj:
             try:
                 private_key = RSA.import_key(
@@ -757,17 +851,46 @@ def pyos_dnc():
         else:
             pyos_os_us()
 def pyos_func():
-      os.system("pause")
+    os.system("pause")
 def pyos_cryfail():
     os.system("cls")
     print("Failed to import Cryptodomex!")
     print("Install it with CMD by using the command")
     print("pip install pycryptodomex")
-    os.system("pause >nul")
-    exit()
+    cryfail = getpass.getpass("Press any key to continue...")
+    if cryfail == ("dr"):
+        print(os.getcwd())
+        os.system("pause >nul")
+        pyos_cryfail()
+    if cryfail == ("bk"):
+        os.chdir('..')
+        pyos_cryfail()
+    if cryfail == ("tmp"):
+        if pyos_osn in (os.getcwd()):
+            os.chdir('..')
+        global pyos_osn
+        if os.path.exists("tmpacc"):
+            os.chdir("tmpacc")
+        else:
+            os.mkdir('tmpacc')
+            os.chdir("tmpacc")
+        pyos_osn = ("tmpacc")
+        pyos_os_us()
+    else:
+        exit()
 
 
 
     
 ###########
+devmess = ('''
+:)
+So a few of you might be wondering why I'm not doing a changelog for this
+program. The answer is simple - I am. Just not yet. You see, changelogs are used
+to log both significant and tiny changes to code. Since PyOS is still in
+ridiculously early development, there is a lot of big and lil changes
+like all the time, so noting each and every one down is for the most part
+time wasting. To me, anyway.
+I'll start making a changelog when we reach V 0.1.
+Thanks! ''')
 pyos_boot()
