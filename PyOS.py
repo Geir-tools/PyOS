@@ -569,7 +569,7 @@ def pyos_os_ad():
             pyos_os_ad()
         print("Launched " + os_in_app)
         pyos_os_ad()
-    elif os_input == ("cls") or ("clear"):
+    elif os_input == ("cls"):
         os.system("cls")
         print("##################################################")
         print("                      Py OS                       ")
