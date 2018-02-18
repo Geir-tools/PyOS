@@ -1,4 +1,4 @@
-###.PyOS.0.0.9.0.### #
+###.PyOS.0.0.9.2.### #
 ######################
 import os            
 os.system("cls")     
@@ -27,7 +27,7 @@ print("[  OK  ] Urllib.request")
 #Encryption / Decryption code - https://www.blog.pythonlibrary.org/2016/05/18/python-3-an-intro-to-encryption/
 #
 #######
-os.system("cls")
+print("[  OK  ] Defining Variables")
 global pyos_ver
 global pyos_iden_ver
 global pyos_upd_cc
@@ -35,12 +35,15 @@ global pyos_osn
 global pyos_aun
 global pyver
 global code
+global pyos_tempadm
 code = 'pyosenckey'
 pyos_upd_cc = False
-pyos_ver = str("PyOS 0.0.9.0")
+pyos_ver = str("PyOS 0.0.9.2")
 pyos_osn = getpass.getuser()
+pyos_tempadm = False
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.9.0.###")
+pyos_iden_ver = ("###.PyOS.0.0.9.2.###")
+print("[  OK  ] Done")
 if not ("3.4") in pyver:
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.4.x")
@@ -174,6 +177,11 @@ def pyos_login():
                 print("                       Sys                        ")
                 print("                      -ADM-                       ")
                 print("##################################################")
+                checkforlog = glob.glob("*.log")
+                if not len(checkforlog) == 0:
+                    logam = len(checkforlog)
+                    logam = str(logam)
+                    print("You have " + logam + " new admin logs.")
                 pyos_os_ad()
             os.system("cls")
             print("##################################################")
@@ -387,6 +395,7 @@ def pyos_mus():
 def pyos_browse():
           os.system("pause")
 def pyos_os_us():
+    global pyos_aun
     os_input = input(">>")
     if os_input == ("help"):
         print("PyOS Commands")
@@ -409,6 +418,9 @@ def pyos_os_us():
             print("Exiting...")
             os.system("pause >nul")
             exit()
+        if pyos_aun == pyos_osn:
+            pyos_tempadm = False
+            pyos_aun = (getpass.getuser())
         print("Logging out...")
         os.system("pause >nul")
         pyos_login()
@@ -484,12 +496,49 @@ def pyos_os_us():
         print("")
         pyos_os_us()
     elif os_input == ("adm"):
+        pyos_aun = getpass.getuser()
         if pyos_osn == pyos_aun:
             print("Switched to admin!")
             pyos_os_ad()
         else:
-            print(pyos_osn + " Is not an admin!")
-            print("Please log in as " + pyos_aun + " for administrator tools.")
+            os.chdir('..')
+            os.chdir(pyos_aun)
+            tryswitch = getpass.getpass("Enter admin (" + pyos_aun + ")'s password...")
+            with open('data_pm.bin', 'rb') as fobj:
+                private_key = RSA.import_key(
+                    open('prkey.bin').read(),
+                    passphrase=code)
+                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                            for x in (private_key.size_in_bytes(), 
+                                                            16, 16, -1) ]
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                session_key = cipher_rsa.decrypt(enc_session_key)
+                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+            datat = data.decode('ascii')
+            if datat == tryswitch:
+                print("Temporary access granted.")
+                os.chdir('..')
+                os.chdir(pyos_osn)
+                pyos_aun == pyos_osn
+                global pyos_tempadm
+                pyos_tempadm = True
+                fobj.close()
+                os.system("pause >nul")
+                pyos_os_ad()
+            os.chdir('..')
+            os.chdir(pyos_aun)
+            timedate = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
+            timedateformat = timedate.replace(":", ".")
+            logfail = str("The user '" + pyos_osn + "' attempted accessing your account with the password '" + tryswitch + "' on/at '" + timedate + "'")
+            logname = str("failedlogin " + timedateformat + ".log")
+            with open(logname, 'w') as log:
+                log.write(logfail)
+                log.close()
+            print("Incorrect password!")
+            print(pyos_aun + " has been alerted.")
+            os.chdir('..')
+            os.chdir(pyos_osn)
             pyos_os_us()
     else:
         print(os_input + " - Bad Input")
@@ -547,7 +596,110 @@ def pyos_os_ad():
         print(" ~~Type 'run [file] to launch direct")
         print("lsf - List files")
         print(" ~~Use 'lsfa' to return all filetypes")
+        print("log - See admin logs")
+        print(" ~~Use 'loga' to see archived logs")
         pyos_os_ad()
+    if os_input == ("log"):
+        checklogs = glob.glob("*.log")
+        if len(checklogs) == 0:
+            print("No new logs!")
+            print("If other users attempt to access your account and fail, their attempts will appear here.")
+            print("")
+            pyos_os_ad()
+        print("")
+        print("Unread logs...")
+        print("")
+        for number, letter in enumerate(checklogs):
+            trnu = number + 1
+            trnus = str(trnu)
+            print(trnus + ":", letter)
+        print("")
+        print("Enter number of log to read...")
+        logchoice_r = input("")
+        try:
+            logchoice = int(logchoice_r)
+        except:
+            print("Illegal characters used!")
+            pyos_os_ad()
+        logchoice = logchoice - 1
+        try:
+            logchoice = checklogs[logchoice]
+        except:
+            print("Failed to open log requested.")
+            pyos_os_ad()
+        if os.path.exists(logchoice):
+            with open(logchoice, 'r') as rlo:
+                for line in rlo:
+                    print(line)
+                    os.system("pause >nul")
+            print("Archiving log...")
+            logrename = logchoice.replace(".log", "")
+            logrename = (logrename + "_archive.alg")
+            os.rename(logchoice, logrename)
+            if not os.path.exists("archlogs"):
+                os.mkdir("archlogs")
+            shutil.move(logrename, "archlogs")
+            rlo.close()
+            pyos_os_ad()
+        else:
+            print("Failed to open log requested.")
+            pyos_os_ad()
+    elif os_input == ("loga"):
+        if not os.path.exists("archlogs"):
+            print("No archived logs!")
+            print("Logs are auto archived when read.")
+            pyos_os_ad()
+        os.chdir("archlogs")
+        checklogs = glob.glob("*.alg")
+        if len(checklogs) == 0:
+            print("No archived logs!")
+            print("Logs are auto archived when read.")
+            os.chdir('..')
+            pyos_os_ad()
+        print("")
+        print("Archived logs...")
+        print("")
+        for number, letter in enumerate(checklogs):
+            trnu = number + 1
+            trnus = str(trnu)
+            print(trnus + ":", letter)
+        print("")
+        print("Enter number of log to read...")
+        logchoice_r = input("")
+        try:
+            logchoice = int(logchoice_r)
+        except:
+            print("Illegal characters used!")
+            os.chdir('..')
+            pyos_os_ad()
+        logchoice = logchoice - 1
+        try:
+            logchoice = checklogs[logchoice]
+        except:
+            print("Failed to open log requested.")
+            os.chdir('..')
+            pyos_os_ad()
+        if os.path.exists(logchoice):
+            with open(logchoice, 'r') as rlo:
+                for line in rlo:
+                    print(line)
+                    os.system("pause >nul")
+            rlo.close()
+            os.chdir('..')
+            pyos_os_ad()
+        else:
+            print("Failed to open log requested.")
+            os.chdir('..')
+            pyos_os_ad()
+    elif os_input == ("upd"):
+        print("Checking for update...")
+        if pyos_upd_cc == False:
+            print("No update required")
+            pyos_os_ad()
+        else:
+            os.chdir('..')
+            os.chdir('..')
+            pyos_update()
     elif os_input == ("ext"):
         exit()
     elif os_input == ("lgt"):
@@ -649,15 +801,6 @@ def pyos_os_ad():
             else:
                 print("File not found!")
                 pyos_os_ad()
-    elif os_input == ("upd"):
-        print("Checking for update...")
-        if pyos_upd_cc == False:
-            print("No update required")
-            pyos_os_ad()
-        else:
-            os.chdir('..')
-            os.chdir('..')
-            pyos_update()
     elif os_input == ("cmd"):
         os.system("cls")
         os.system("@mode con cols=130 lines=34")
@@ -758,6 +901,8 @@ def pyos_os_ad():
             trnu = number + 1
             trnus = str(trnu)
             if (".bin") in letter:
+                continue
+            if (".log") in letter:
                 continue
             print(letter)
         print("")
