@@ -1,8 +1,8 @@
-###.PyOS.0.0.8.8.### #
+###.PyOS.0.0.9.0.### #
 ######################
 import os            
 os.system("cls")     
-print("Importing...")
+print("[  OK  ] OS")
 import time
 print("[  OK  ] Time")
 import sys
@@ -30,15 +30,17 @@ print("[  OK  ] Urllib.request")
 os.system("cls")
 global pyos_ver
 global pyos_iden_ver
+global pyos_upd_cc
 global pyos_osn
 global pyos_aun
 global pyver
 global code
 code = 'pyosenckey'
-pyos_ver = str("PyOS 0.0.8.8")
+pyos_upd_cc = False
+pyos_ver = str("PyOS 0.0.9.0")
 pyos_osn = getpass.getuser()
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.8.8.###")
+pyos_iden_ver = ("###.PyOS.0.0.9.0.###")
 if not ("3.4") in pyver:
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.4.x")
@@ -68,8 +70,13 @@ def pyos_boot():
                 global get_random_bytes
                 global PKCSl_OAEP
                 from Cryptodome.PublicKey import RSA
-                from Cryptodome.Cipher import AES, PKCS1_OAEP
+                print("[  OK  ] RSA Import")
+                from Cryptodome.Cipher import PKCS1_OAEP
+                print("[  OK  ] PKCSl_OAEP Import")
+                from Cryptodome.Cipher import AES
+                print("[  OK  ] AES Import")
                 from Cryptodome.Random import get_random_bytes
+                print("[  OK  ] Random Import")
               except:
                 pyos_cryfail()
               print("[  OK  ] Booting!")
@@ -83,8 +90,13 @@ def pyos_boot():
                 global get_random_bytes
                 global PKCSl_OAEP
                 from Cryptodome.PublicKey import RSA
-                from Cryptodome.Cipher import AES, PKCS1_OAEP
+                print("[  OK  ] RSA Import")
+                from Cryptodome.Cipher import PKCS1_OAEP
+                print("[  OK  ] PKCSl_OAEP Import")
+                from Cryptodome.Cipher import AES
+                print("[  OK  ] AES Import")
                 from Cryptodome.Random import get_random_bytes
+                print("[  OK  ] Random Import")
             except:
                 pyos_cryfail()
             pyos_set()
@@ -97,9 +109,13 @@ def pyos_boot():
             global get_random_bytes
             global PKCS1_OAEP
             from Cryptodome.PublicKey import RSA
+            print("[  OK  ] RSA Import")
             from Cryptodome.Cipher import AES
+            print("[  OK  ] AES Import")
             from Cryptodome.Cipher import PKCS1_OAEP
+            print("[  OK  ] PKCSl_OAEP Import")
             from Cryptodome.Random import get_random_bytes
+            print("[  OK  ] Random Import")
         except:
             pyos_cryfail()
         print("[  OK  ] Assuming setup is required")
@@ -126,6 +142,7 @@ def pyos_login():
         break
     if not tms == pyos_iden_ver:
         print("An update is available.")
+        pyos_upd_cc = True
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
     print("3} Create new user")
@@ -382,6 +399,7 @@ def pyos_os_us():
         print("dnc - Read Encrypted Files")
         print("typ - Word Processor")
         print("rdf - Read Files")
+        print("lsf - List Files")
         print("adm - Switch To Administrator")
         pyos_os_us()
     elif os_input == ("ext"):
@@ -443,6 +461,28 @@ def pyos_os_us():
         else:
             print("File not found!")
             pyos_os_us()
+    elif os_input == ("lsf"):
+        files = glob.glob("*.*")
+        encfiles = glob.glob("*")
+        print("")
+        print("Files found:")
+        for number, letter in enumerate(files):
+            trnu = number + 1
+            trnus = str(trnu)
+            if (".bin") in letter:
+                continue
+            print(letter)
+        print("")
+        print("Encrypted files found:")
+        for number, letter in enumerate(encfiles):
+            trnu = number + 1
+            trnus = str(trnu)
+            if not ("_enc") in letter:
+                continue
+            letter = letter.replace("_enc", "")
+            print(letter)
+        print("")
+        pyos_os_us()
     elif os_input == ("adm"):
         if pyos_osn == pyos_aun:
             print("Switched to admin!")
@@ -529,7 +569,7 @@ def pyos_os_ad():
             pyos_os_ad()
         print("Launched " + os_in_app)
         pyos_os_ad()
-    elif os_input == ("cls"):
+    elif os_input == ("cls") or ("clear"):
         os.system("cls")
         print("##################################################")
         print("                      Py OS                       ")
@@ -611,9 +651,13 @@ def pyos_os_ad():
                 pyos_os_ad()
     elif os_input == ("upd"):
         print("Checking for update...")
-        os.chdir('..')
-        os.chdir('..')
-        pyos_update()
+        if pyos_upd_cc == False:
+            print("No update required")
+            pyos_os_ad()
+        else:
+            os.chdir('..')
+            os.chdir('..')
+            pyos_update()
     elif os_input == ("cmd"):
         os.system("cls")
         os.system("@mode con cols=130 lines=34")
@@ -675,13 +719,21 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_os_ad()
         if installin == ("o"):
-            print("Enter name of user to install for...")
+            os.chdir('..')
+            dirs = os.listdir(os.getcwd())
+            print("")
+            for number, letter in enumerate(dirs):
+                trnu = number + 1
+                trnus = str(trnu)
+                print(trnus + ":", letter)
+            print("")
+            print("Enter the NAME of the user you want to switch to.")
             userinstall = input("")
             try:
-                os.chdir('..')
                 os.chdir(userinstall)
             except:
                 print("User not found!")
+                os.chdir(pyos_osn)
                 pyos_os_ad()
             print("Installing for " + userinstall)
             if os.path.exists("appdata"):
