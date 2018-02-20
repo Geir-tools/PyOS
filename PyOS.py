@@ -1,4 +1,4 @@
-###.PyOS.0.0.9.2.### #
+###.PyOS.0.0.9.4.### #
 ######################
 import os            
 os.system("cls")     
@@ -36,20 +36,28 @@ global pyos_aun
 global pyver
 global code
 global pyos_tempadm
+global pyos_fallback
+pyos_fallback = False
 code = 'pyosenckey'
 pyos_upd_cc = False
-pyos_ver = str("PyOS 0.0.9.2")
+pyos_ver = str("PyOS 0.0.9.4")
 pyos_osn = getpass.getuser()
 pyos_tempadm = False
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.9.2.###")
+pyos_iden_ver = ("###.PyOS.0.0.9.4.###")
 print("[  OK  ] Done")
-if not ("3.4") in pyver:
+if pyver > ("3.5"):
     print("You are using an unsupported version of Python!")
-    print("PyOS works best on Python 3.4.x")
+    print("PyOS works best on Python 3.0 to 3.5")
     print("Thanks!")
     os.system("pause")
     exit()
+if pyver <= ("3.0"):
+    print("You are using an unsupported version of Python!")
+    print("PyOS works best on Python 3.0 to 3.5")
+    print("Thanks!")
+    os.system("pause")
+    exit()   
 print("[  OK  ] Supported Python Version")
 pyos_aun = getpass.getuser()
 os.system("title " + pyos_ver)
@@ -145,6 +153,7 @@ def pyos_login():
         break
     if not tms == pyos_iden_ver:
         print("An update is available.")
+        global pyos_upd_cc
         pyos_upd_cc = True
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
@@ -152,6 +161,8 @@ def pyos_login():
     print("4} Exit")
     pyos_login_c = input("")
     if pyos_login_c == ("1"):
+        if pyos_fallback == True:
+            pyos_fallbacklogin()
         print("Please enter your password, " + pyos_osn)
         enterpass = getpass.getpass("")
         with open('data_pm.bin', 'rb') as fobj:
@@ -196,6 +207,10 @@ def pyos_login():
             os.system("pause >nul")
             pyos_login()
     elif pyos_login_c == ("2"):
+        if pyos_fallback == True:
+            print("Disabled in fallback mode")
+            os.system("pause >nul")
+            pyos_login()
         os.chdir('..')
         dirs = os.listdir(os.getcwd())
         print("")
@@ -225,6 +240,10 @@ def pyos_login():
             os.system("pause >nul")
             pyos_login()
     elif pyos_login_c == ("3"):
+        if pyos_fallback == True:
+            print("Disabled in fallback mode")
+            os.system("pause >nul")
+            pyos_login()
         os.chdir('..')
         print("Enter a new username...")
         newusern = input("")
@@ -243,35 +262,72 @@ def pyos_login():
         print(pyos_tempcd)
         os.system("pause >nul")
         pyos_login()
-    elif pyos_login_c == ("dev"):
+    elif pyos_login_c == ("devff"):
+        if pyos_fallback == True:
+            print("Disabled in fallback mode.")
+            os.system("pause >nul")
+            pyos_login()
         print(devmess)
         os.system("pause >nul")
         pyos_cryfail()
     else:
         pyos_login()
+def pyos_fallbacklogin():
+    pyos_dr_fall = os.getcwd()
+    if not "fallback" in pyos_dr_fall:
+        if os.path.exists("fallback"):
+            os.chdir("fallback")
+        else:
+            os.mkdir("fallback")
+            os.chdir("fallback")
+    os.system("cls")
+    print("##################################################")
+    print("                      Py OS                       ")
+    print("                       Sys                        ")
+    print("                      -ADM-                       ")
+    print("##################################################")
+    checkforlog = glob.glob("*.log")
+    if not len(checkforlog) == 0:
+        logam = len(checkforlog)
+        logam = str(logam)
+        print("You have " + logam + " new admin logs.")
+    pyos_os_ad()
 def pyos_set():
     os.system("cls")
     pyos_dr = os.getcwd()
     if not "PyOS_Data" in pyos_dr:
         os.chdir("PyOS_Data")
-    if not os.path.exists(pyos_osn):
-        os.mkdir(pyos_osn)
-        os.chdir(pyos_osn)
-        os.mkdir('appdata')
-    if os.path.exists(pyos_osn):
-        os.chdir(pyos_osn)
-        if not os.path.exists("appdata"):
+    if not pyos_osn in pyos_dr:
+        if not os.path.exists(pyos_osn):
+            os.mkdir(pyos_osn)
+            os.chdir(pyos_osn)
             os.mkdir('appdata')
+        if os.path.exists(pyos_osn):
+            os.chdir(pyos_osn)
+            if not os.path.exists("appdata"):
+                os.mkdir('appdata')
     os.system("@mode con cols=50 lines=34")
-    print("##################################################")
-    print("")
-    print("                     WELCOME                      ")
-    print("                       T O                        ")
-    print("                      Py OS                       ")
-    print("")
-    print("")
-    print("##################################################")
+    if pyos_fallback == True:
+        print("##################################################")
+        print("")
+        print("                     WELCOME                      ")
+        print("                       T O                        ")
+        print("                      Py OS                       ")
+        print("                    Fall back                     ")      
+        print("                     M o d e                      ")
+        print("##################################################")
+    else:
+        print("##################################################")
+        print("")
+        print("                     WELCOME                      ")
+        print("                       T O                        ")
+        print("                      Py OS                       ")
+        print("")      
+        print("")
+        print("##################################################")        
     print("Hi, " + pyos_osn + "!")
+    if pyos_fallback == True:
+        pyos_setpsf()
     print("We're going to create an account for you.")
     print("Please enter a password.")
     print("Keystrokes will not be echoed.")
@@ -312,6 +368,17 @@ def pyos_setps():
         print("Passwords do not match!")
         os.system("pause >nul")
         pyos_setps()
+def pyos_setpsf():
+    if os.path.exists("fallback"):
+        os.chdir("fallback")
+    else:
+        os.mkdir("fallback")
+        os.chdir("fallback")
+    print("")
+    print("A seperate account has been created.")
+    print("A password is not needed to access this account.")
+    os.system("pause >nul")
+    pyos_login() 
 def pyos_prog():
     os.system("cls")
     print("##################################################")
@@ -585,11 +652,13 @@ def pyos_os_ad():
         print("app - Displays list of available apps")
         print(" ~~Type 'app [appname]' to launch direct")
         print("cls - Clears screen")
-        print("enc - Encryption Tool")
-        print("dnc - Read Encrypted Files")
+        if pyos_fallback == False:
+            print("enc - Encryption Tool")
+            print("dnc - Read Encrypted Files")
         print("typ - Word Processor")
         print("rdf - Read Files")
         print("upd - Check For Update")
+        print(" ~~Use 'upda' to force update")
         print("cmd - Command Prompt")
         print("ist - Install Apps")
         print("run - Run Files")
@@ -700,12 +769,41 @@ def pyos_os_ad():
             os.chdir('..')
             os.chdir('..')
             pyos_update()
+    elif os_input == ("upda"):
+        print("Forcing update...")
+        os.chdir('..')
+        os.chdir('..')
+        pyos_update()
     elif os_input == ("ext"):
         exit()
     elif os_input == ("lgt"):
+        if pyos_fallback == True:
+            print("Logging out...")
+            os.system("pause >nul")
+            os.chdir('..')
+            pyos_login()
         print("Logging out...")
         os.system("pause >nul")
         pyos_login()
+    elif ("run") in os_input:
+        if os_input == ("run"):
+            print("Please specify file!")
+            pyos_os_ad()
+        else:
+            try:
+                pyos_runfile = os_input.replace('run ', '')
+                os.startfile(pyos_runfile)
+                pyos_os_ad()
+            except:
+                os_input_txt = (os_input + ".txt")
+                try:
+                    os_inputx = os_input_txt.replace('run ', '')
+                    os.startfile(os_inputx)
+                    pyos_os_ad()
+                except:
+                    print("File not found!")
+                    pyos_os_ad()
+            pyos_os_ad()
     elif ("app") in os_input:
         if os_input == ("app"):
             pyos_prog()
@@ -730,8 +828,14 @@ def pyos_os_ad():
         print("##################################################")
         pyos_os_ad()
     elif os_input == ("enc"):
+        if pyos_fallback == True:
+            print("Disabled in fallback mode.")
+            pyos_os_ad()
         pyos_enc()
     elif os_input == ("dnc"):
+        if pyos_fallback == True:
+            print("Disabled in fallback mode.")
+            pyos_os_ad()
         pyos_dnc()
     elif os_input == ("typ"):
         print("")
@@ -808,25 +912,6 @@ def pyos_os_ad():
         print("Windows Command Prompt Emulator.")
         print("Type 'return' to go back to PyOS.")
         pyos_adm_cmd()
-    elif ("run") in os_input:
-        if os_input == ("run"):
-            print("Please specify file!")
-            pyos_os_ad()
-        else:
-            try:
-                pyos_runfile = os_input.replace('run ', '')
-                os.startfile(pyos_runfile)
-                pyos_os_ad()
-            except:
-                os_input_txt = (os_input + ".txt")
-                try:
-                    os_inputx = os_input_txt.replace('run ', '')
-                    os.startfile(os_inputx)
-                    pyos_os_ad()
-                except:
-                    print("File not found!")
-                    pyos_os_ad()
-            pyos_os_ad()
     elif os_input == ("ist"):
         print("Enter name of app to download (Do not include filetypes).")
         appinst = input("")
@@ -935,8 +1020,8 @@ def pyos_adm_cmd():
     pyos_cmd_dr = os.getcwd()
     pyos_cmd_in = input(pyos_cmd_dr + ">")
     if pyos_cmd_in == ("return"):
-        pyos_os_ad()
         os.system("@mode con cols=50 lines=34")
+        pyos_os_ad()
     else:
         try:
             os.system(pyos_cmd_in)
@@ -1063,34 +1148,46 @@ def pyos_func():
     os.system("pause")
 def pyos_cryfail():
     os.system("cls")
-    print("Failed to import Cryptodomex!")
-    print("Install it with CMD by using the command")
+    os.system("@mode con cols=50 lines=34")
+    print("##################################################")
+    print("")
+    print("Failed Import!")
+    print("")
+    print("##################################################")
+    print("Cryptodome could not be found!")
+    print("Install it with CMD using...")
     print("pip install pycryptodomex")
-    cryfail = getpass.getpass("Press any key to continue...")
-    if cryfail == ("dr"):
+    print("")
+    print("1} Boot into fallback mode")
+    print("2} Attempt to install Cryptodome now")
+    print("3} Exit")
+    cryfail = input("")
+    if cryfail == ("cd"):
         print(os.getcwd())
         os.system("pause >nul")
         pyos_cryfail()
-    if cryfail == ("bk"):
-        os.chdir('..')
-        pyos_cryfail()
-    if cryfail == ("tmp"):
-        if pyos_osn in (os.getcwd()):
-            os.chdir('..')
-        global pyos_osn
-        if os.path.exists("tmpacc"):
-            os.chdir("tmpacc")
-        else:
-            os.mkdir('tmpacc')
-            os.chdir("tmpacc")
-        pyos_osn = ("tmpacc")
-        pyos_os_us()
-    else:
-        exit()
-
-
-
-    
+    if cryfail == ("2"):
+        try:
+            os.system("pip install pycryptodomex")
+        except:
+            print("Failed.")
+            print("Try adding Python to PATH, then try again.")
+            os.system("pause")
+            pyos_cryfail()
+        print("Successfully installed.")
+        print("Now restarting...")
+        os.system("pause >nul")
+        pyos_boot()
+    if cryfail == ("3"):
+        ext()
+    elif cryfail == ("1"):
+        print("")
+        print("PyOS will now boot w/o encryption services.")
+        global pyos_fallback
+        os.system("title " + pyos_ver  + " Fallback Mode")
+        pyos_fallback = True
+        os.system("pause")
+        pyos_set()
 ###########
 devmess = ('''
 :)
