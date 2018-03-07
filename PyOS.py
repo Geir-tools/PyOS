@@ -1,4 +1,4 @@
-###.PyOS.0.0.9.4.### #
+###.PyOS.0.0.9.6.### #
 ######################
 import os            
 os.system("cls")     
@@ -40,13 +40,13 @@ global pyos_fallback
 pyos_fallback = False
 code = 'pyosenckey'
 pyos_upd_cc = False
-pyos_ver = str("PyOS 0.0.9.4")
+pyos_ver = str("PyOS 0.0.9.6")
 pyos_osn = getpass.getuser()
 pyos_tempadm = False
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.9.4.###")
+pyos_iden_ver = ("###.PyOS.0.0.9.6.###")
 print("[  OK  ] Done")
-if pyver > ("3.5"):
+if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.0 to 3.5")
     print("Thanks!")
@@ -342,10 +342,10 @@ def pyos_setps():
                 protection="scryptAndAES128-CBC")
         with open('prkey.bin', 'wb') as f:
                 f.write(encrypted_key)
-                os.system("attrib +s +h prkey.bin")
+                os.system("attrib +h prkey.bin")
         with open('pukey.bin', 'wb') as f:
                 f.write(key.publickey().exportKey())
-                os.system("attrib +s +h pukey.bin")
+                os.system("attrib +h pukey.bin")
         with open('data_pm.bin', 'wb') as out_file:
             recipient_key = RSA.import_key(
                 open('pukey.bin').read())
@@ -358,7 +358,7 @@ def pyos_setps():
             out_file.write(cipher_aes.nonce)
             out_file.write(tag)
             out_file.write(ciphertext)
-            os.system("attrib +s +h data_pm.bin")
+            os.system("attrib +h data_pm.bin")
         print("")
         print("Setup is complete!")
         print("Press any key to go to menu.")
@@ -523,6 +523,67 @@ def pyos_os_us():
         print("Saved!")
         pw.close()
         pyos_os_us()
+    elif os_input == ("cps"):
+        print("")
+        if pyos_fallback == True:
+            print("Disabled in fallback mode.")
+            pyos_os_ad()
+        print("Enter your current password...")
+        enterpass = getpass.getpass("")
+        with open('data_pm.bin', 'rb') as fobj:
+            private_key = RSA.import_key(
+                open('prkey.bin').read(),
+                passphrase=code)
+            enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                        for x in (private_key.size_in_bytes(), 
+                                                        16, 16, -1) ]
+            cipher_rsa = PKCS1_OAEP.new(private_key)
+            session_key = cipher_rsa.decrypt(enc_session_key)
+            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+            data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        datat = data.decode('ascii')
+        if not datat == enterpass:
+            print("Incorrect password!")
+            fobj.close()
+            pyos_os_us()
+        fobj.close()
+        os.remove("data_pm.bin")
+        os.remove("prkey.bin")
+        os.remove("pukey.bin")
+        print("Enter a new password...")
+        passwordcheck = getpass.getpass("")
+        print("Please type your password again.")
+        passwordre = getpass.getpass("")
+        if passwordcheck == passwordre:
+            key = RSA.generate(2048)
+            encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+                    protection="scryptAndAES128-CBC")
+            with open('prkey.bin', 'wb') as f:
+                    f.write(encrypted_key)
+                    os.system("attrib +h prkey.bin")
+            with open('pukey.bin', 'wb') as f:
+                    f.write(key.publickey().exportKey())
+                    os.system("attrib +h pukey.bin")
+            with open('data_pm.bin', 'wb') as out_file:
+                recipient_key = RSA.import_key(
+                    open('pukey.bin').read())
+                session_key = get_random_bytes(16)
+                cipher_rsa = PKCS1_OAEP.new(recipient_key)
+                out_file.write(cipher_rsa.encrypt(session_key))
+                cipher_aes = AES.new(session_key, AES.MODE_EAX)
+                data = bytes(passwordcheck, encoding='utf-8')
+                ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+                out_file.write(cipher_aes.nonce)
+                out_file.write(tag)
+                out_file.write(ciphertext)
+                os.system("attrib +h data_pm.bin")
+            print("")
+            print("Password changed.")
+            pyos_os_us()
+        else:
+            print("Passwords do not match!")
+            os.system("pause >nul")
+            pyos_os_us()
     elif os_input == ("rdf"):
         print("Enter file name to open (Do not include filetype).")
         pyos_read = input("")
@@ -536,7 +597,6 @@ def pyos_os_us():
                     print(datat)
                     pr.close()
                     pyos_os_us()
-                    
         else:
             print("File not found!")
             pyos_os_us()
@@ -642,6 +702,112 @@ def pyos_update():
         os.system("echo exit() >> UpdateClient.py")
         os.startfile("UpdateClient.py")
         exit()
+def pyos_vdc():
+    try:
+        import speech_recognition as sr
+    except:
+        print("Failed to import modules.")
+        print("For voice dictation to work, please use...")
+        print("pip install SpeechRecognition")
+        print("pip install PyAudio")
+        pyos_os_ad()
+    print("Initialising...")
+    try:
+        mic = sr.Recognizer()
+        xtest = sr.Microphone()
+    except:
+        print("Failed to initialise microphone.")
+        pyos_os_ad()
+    print("Done!")
+    os.system("cls")
+    print("##################################################")
+    print("Welcome to PyOS Voice Dictation.")
+    print("1} Use in live mode")
+    print("2} Use in type mode")
+    print("3} Return")
+    print("")
+    vdcin = input("")
+    if vdcin == ("1"):
+        print("Start speaking now.")
+        print("Say 'finished' to return.")
+        pyos_vdc_live()
+    if vdcin == ("2"):
+        print("Start speaking now.")
+        print("Say 'finished' to save text.")
+        global speechlist
+        speechlist = []
+        pyos_vdc_type()
+    if vdcin == ("3"):
+        print("Returning...")
+        pyos_os_ad()
+    else:
+        print("Bad input!")
+        os.system("pause >nul")
+        pyos_vdc()
+def pyos_vdc_live():
+    import speech_recognition as sr
+    mic = sr.Recognizer()
+    with sr.Microphone() as listen:
+        audio = mic.listen(listen)
+    try:
+        speech = mic.recognize_google(audio)
+        if speech == ("finished"):
+            print("Returning...")
+            time.sleep(1)
+            pyos_vdc()
+        print(speech)
+        pyos_vdc_live()
+    except sr.UnknownValueError:
+        print("Could not understand.")
+        pyos_vdc_live()
+    except sr.RequestError as e:
+        print("Failed to communicate with Google API.")
+        pyos_vdc_live()
+def pyos_vdc_type():
+    import speech_recognition as sr
+    mic = sr.Recognizer()
+    with sr.Microphone() as listen:
+        audio = mic.listen(listen)
+    try:
+        speech = mic.recognize_google(audio)
+        if speech == ("finished"):
+            final = " ".join(speechlist)
+            print(final)
+            print("Enter name for file.")
+            pyos_wordname = input("")
+            if (".") in pyos_wordname:
+                final = final.encode()
+                try:
+                    with open(pyos_wordname, 'wb') as pw:
+                        pw.write(final)
+                except:
+                    print("Failed to save.")
+                    pyos_os_ad()
+                print("Saved!")
+                pw.close()
+                pyos_os_ad()
+            else:
+                final = final.encode()
+                pyos_word_txt = (pyos_wordname + ".txt")
+                try:
+                    with open(pyos_word_txt, 'wb') as pw:
+                        pw.write(final)
+                except:
+                    print("Failed to save.")
+                    pyos_os_ad()
+                print("Saved!")
+                pw.close()
+                pyos_os_ad()
+        print(speech)
+        speech += ""
+        speechlist.extend([speech])
+        pyos_vdc_type()
+    except sr.UnknownValueError:
+        print("Could not understand.")
+        pyos_vdc_live()
+    except sr.RequestError as e:
+        print("Failed to communicate with Google API.")
+        pyos_vdc_live()
 def pyos_os_ad():
     os_input = input(">>")
     if os_input == ("help"):
@@ -649,6 +815,7 @@ def pyos_os_ad():
         print("help - Displays this menu")
         print("ext - Exits")
         print("lgt - Logs out of account")
+        print("cps - Change Password")
         print("app - Displays list of available apps")
         print(" ~~Type 'app [appname]' to launch direct")
         print("cls - Clears screen")
@@ -667,7 +834,12 @@ def pyos_os_ad():
         print(" ~~Use 'lsfa' to return all filetypes")
         print("log - See admin logs")
         print(" ~~Use 'loga' to see archived logs")
+        print("vdc - Voice dictation")
+        print("vin - Voice input")
         pyos_os_ad()
+    if os_input == ("vdc"):
+        print("PyOS Voice Input")
+        pyos_vdc()
     if os_input == ("log"):
         checklogs = glob.glob("*.log")
         if len(checklogs) == 0:
@@ -774,6 +946,67 @@ def pyos_os_ad():
         os.chdir('..')
         os.chdir('..')
         pyos_update()
+    elif os_input == ("cps"):
+        print("")
+        if pyos_fallback == True:
+            print("Disabled in fallback mode.")
+            pyos_os_ad()
+        print("Enter your current password...")
+        enterpass = getpass.getpass("")
+        with open('data_pm.bin', 'rb') as fobj:
+            private_key = RSA.import_key(
+                open('prkey.bin').read(),
+                passphrase=code)
+            enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                        for x in (private_key.size_in_bytes(), 
+                                                        16, 16, -1) ]
+            cipher_rsa = PKCS1_OAEP.new(private_key)
+            session_key = cipher_rsa.decrypt(enc_session_key)
+            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+            data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        datat = data.decode('ascii')
+        if not datat == enterpass:
+            print("Incorrect password!")
+            fobj.close()
+            pyos_os_ad()
+        fobj.close()
+        os.remove("data_pm.bin")
+        os.remove("prkey.bin")
+        os.remove("pukey.bin")
+        print("Enter a new password...")
+        passwordcheck = getpass.getpass("")
+        print("Please type your password again.")
+        passwordre = getpass.getpass("")
+        if passwordcheck == passwordre:
+            key = RSA.generate(2048)
+            encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+                    protection="scryptAndAES128-CBC")
+            with open('prkey.bin', 'wb') as f:
+                    f.write(encrypted_key)
+                    os.system("attrib +h prkey.bin")
+            with open('pukey.bin', 'wb') as f:
+                    f.write(key.publickey().exportKey())
+                    os.system("attrib +h pukey.bin")
+            with open('data_pm.bin', 'wb') as out_file:
+                recipient_key = RSA.import_key(
+                    open('pukey.bin').read())
+                session_key = get_random_bytes(16)
+                cipher_rsa = PKCS1_OAEP.new(recipient_key)
+                out_file.write(cipher_rsa.encrypt(session_key))
+                cipher_aes = AES.new(session_key, AES.MODE_EAX)
+                data = bytes(passwordcheck, encoding='utf-8')
+                ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+                out_file.write(cipher_aes.nonce)
+                out_file.write(tag)
+                out_file.write(ciphertext)
+                os.system("attrib +h data_pm.bin")
+            print("")
+            print("Password changed.")
+            pyos_os_ad()
+        else:
+            print("Passwords do not match!")
+            os.system("pause >nul")
+            pyos_os_ad()
     elif os_input == ("ext"):
         exit()
     elif os_input == ("lgt"):
@@ -814,6 +1047,7 @@ def pyos_os_ad():
             os.startfile(os_in_app)
             os.chdir('..')
         except:
+            os_in_app = (os_in_app.replace(".py", ""))
             print("No app named " + os_in_app)
             os.chdir('..')
             pyos_os_ad()
@@ -901,7 +1135,6 @@ def pyos_os_ad():
                         print(datat)
                         pr.close()
                         pyos_os_ad()
-                        
             else:
                 print("File not found!")
                 pyos_os_ad()
@@ -976,6 +1209,9 @@ def pyos_os_ad():
             os.chdir('..')
             os.chdir('..')
             os.chdir(pyos_osn)
+            pyos_os_ad()
+        else:
+            print("Cancelled.")
             pyos_os_ad()
     elif os_input == ("lsf"):
         files = glob.glob("*.*")
@@ -1056,10 +1292,10 @@ def pyos_enc():
                         protection="scryptAndAES128-CBC")
                 with open('prkey.file.bin', 'wb') as f:
                         f.write(encrypted_key)
-                        os.system("attrib +s +h prkey.file.bin")
+                        os.system("attrib +h prkey.file.bin")
                 with open('pukey.file.bin', 'wb') as f:
                         f.write(key.publickey().exportKey())
-                        os.system("attrib +s +h pukey.file.bin")
+                        os.system("attrib +h pukey.file.bin")
                 with open('data.file.bin', 'wb') as out_file:
                     recipient_key = RSA.import_key(
                         open('pukey.file.bin').read())
@@ -1072,7 +1308,7 @@ def pyos_enc():
                     out_file.write(cipher_aes.nonce)
                     out_file.write(tag)
                     out_file.write(ciphertext)
-                    os.system("attrib +s +h data.file.bin")
+                    os.system("attrib +h data.file.bin")
                     os.remove(pyos_enc_file_txt)
                     f.close()
                     out_file.close()
@@ -1188,6 +1424,8 @@ def pyos_cryfail():
         pyos_fallback = True
         os.system("pause")
         pyos_set()
+    else:
+        pyos_cryfail()
 ###########
 devmess = ('''
 :)
