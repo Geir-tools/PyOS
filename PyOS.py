@@ -1,4 +1,31 @@
-###.PyOS.0.0.9.6.### #
+###.PyOS.0.0.9.8.### #
+lisence = '''
+MIT License
+
+Copyright (c) 2018 - 20xx Sam Forrester
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Encryption / Decryption code - https://www.blog.pythonlibrary.org/2016/05/18/python-3-an-intro-to-encryption/
+Voice Recognition - https://pythonspot.com/speech-recognition-using-google-speech-api/
+ ~~ Both of these codes have been modified, but the framework was based on these.
+'''
 ######################
 import os            
 os.system("cls")     
@@ -22,10 +49,20 @@ print("[  OK  ] Glob")
 import urllib.request
 print("[  OK  ] Urllib.request")
 ##################################
-#CREDIT#
-#General Coding - Sam Forrester
-#Encryption / Decryption code - https://www.blog.pythonlibrary.org/2016/05/18/python-3-an-intro-to-encryption/
-#
+##################################################
+global credit
+credit = '''
+CREDIT
+General Coding by Sam Forrester, (C) 2018 - 20xx
+This program is protected under the MIT Lisence.
+See source code for more info.
+
+Encryption / Decryption and Voice Recognition code
+referances can be found in the source code.
+
+Thanks to Mike Atkinson and Stack Overflow for
+other various tips.
+'''
 #######
 print("[  OK  ] Defining Variables")
 global pyos_ver
@@ -40,11 +77,11 @@ global pyos_fallback
 pyos_fallback = False
 code = 'pyosenckey'
 pyos_upd_cc = False
-pyos_ver = str("PyOS 0.0.9.6")
+pyos_ver = str("PyOS 0.0.9.8")
 pyos_osn = getpass.getuser()
 pyos_tempadm = False
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.9.6.###")
+pyos_iden_ver = ("###.PyOS.0.0.9.8.###")
 print("[  OK  ] Done")
 if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
@@ -477,7 +514,11 @@ def pyos_os_us():
         print("rdf - Read Files")
         print("lsf - List Files")
         print("adm - Switch To Administrator")
+        print("crd - Credits")
         pyos_os_us()
+    if os_input == ("crd"):
+        print(credit)
+        pyos_os_ad()
     elif os_input == ("ext"):
         exit()
     elif os_input == ("lgt"):
@@ -702,6 +743,31 @@ def pyos_update():
         os.system("echo exit() >> UpdateClient.py")
         os.startfile("UpdateClient.py")
         exit()
+def pyos_localback():
+    if os.path.exists("UpdateClientBK.py"):
+        os.startfile("UpdateClientBK.py")
+        exit()
+    else:
+        os.system("echo import time >> UpdateClientBK.py")
+        os.system("echo import os >> UpdateClientBK.py")
+        os.system("echo os.system('title PyOS Backup Restore') >> UpdateClientBK.py")
+        os.system("echo print('Restoring...') >> UpdateClientBK.py")
+        os.system("echo time.sleep(2) >> UpdateClientBK.py")
+        os.system("echo os.remove('PyOS.py') >> UpdateClientBK.py")
+        os.system("echo with open('backup_restore.dat', 'rb') as u: >> UpdateClientBK.py")
+        os.system("echo    with open('PyOS.py', 'w', encoding='utf-8', newline='') as p: >> UpdateClientBK.py")
+        os.system("echo        x = u.read() >> UpdateClientBK.py")
+        os.system("echo        x = x.decode('ascii') >> UpdateClientBK.py")
+        os.system("echo        p.write(x) >> UpdateClientBK.py")
+        os.system("echo        p.close() >> UpdateClientBK.py")
+        os.system("echo        u.close() >> UpdateClientBK.py")
+        os.system("echo        os.remove('backup_restore.dat') >> UpdateClientBK.py")
+        os.system("echo print('Restored!') >> UpdateClientBK.py")
+        os.system("echo time.sleep(2) >> UpdateClientBK.py")
+        os.system("echo os.startfile('PyOS.py') >> UpdateClientBK.py")
+        os.system("echo exit() >> UpdateClientBK.py")
+        os.startfile("UpdateClientBK.py")
+        exit()
 def pyos_vdc():
     try:
         import speech_recognition as sr
@@ -834,9 +900,115 @@ def pyos_os_ad():
         print(" ~~Use 'lsfa' to return all filetypes")
         print("log - See admin logs")
         print(" ~~Use 'loga' to see archived logs")
+        print("rib - Reinstall PyOS backup")
+        print("crb - Create Backup")
         print("vdc - Voice dictation")
-        print("vin - Voice input")
+        print("crd - Credits")
         pyos_os_ad()
+    if os_input == ("crd"):
+        print(credit)
+        pyos_os_ad()
+    if os_input == ("crb"):
+            os.chdir('..')
+            if os.path.exists(pyos_iden_ver):
+                print("Backup already exists for this version.")
+                pyos_os_ad()
+            else:
+                print("Creating backup...")
+                if os.path.exists(pyos_iden_ver):
+                    os.chdir(pyos_iden_ver)
+                else:
+                    os.mkdir(pyos_iden_ver)
+                    os.chdir(pyos_iden_ver)
+                os.chdir('..')
+                os.chdir('..')
+                pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
+                os.system("type PyOS.py >> " + pyos_iden_ver_file)
+                copydir = ("PyOS_Data/" + pyos_iden_ver)
+                shutil.copy2(pyos_iden_ver_file, copydir)
+                os.remove(pyos_iden_ver_file)
+                os.chdir("PyOS_Data")
+                os.chdir(pyos_osn)
+                print("Backup Created!")
+                pyos_os_ad()
+    if os_input == ("rib"):
+        print("Finding backups...")
+        os.chdir('..')
+        trubacks = []
+        checkbackups = glob.glob('*')
+        if len(checkbackups) == 0:
+            print("No backups!")
+            print("You can create one by using 'cbk'")
+            pyos_os_ad()
+        print("")
+        print("Found these backups.")
+        print("Choose one to revert to.")
+        print("Enter anything else to cancel.")
+        print("Reverting to an old version does not delete data.")
+        print("")
+        for number, letter in enumerate(checkbackups):
+            trnu = number + 1
+            trnus = str(trnu)
+            if not ("###.PyOS.") in letter:
+                continue
+            trubacks.extend([letter])
+        for number, letter in enumerate(trubacks):
+            trnu = number + 1
+            trnus = str(trnu)
+            letter = letter.replace("###", "")
+            letter = letter.replace(".", " ")
+            print(trnus + ":", letter)            
+        choosebak = input()
+        try:
+            cbk = int(choosebak)
+        except:
+            print("Cancelled.")
+            os.chdir(pyos_osn)
+            pyos_os_ad()
+        cbk = cbk - 1
+        try:
+            cbk = trubacks[cbk]
+        except:
+            print("Cancelled.")
+            os.chdir(pyos_osn)
+            pyos_os_ad()
+        print("Preparing to restore...")
+        os.chdir('..')
+        if os.path.exists("backup_restore.dat"):
+            os.remove("backup_restore.dat")
+        if os.path.exists("UpdateClientBK.py"):
+            os.remove("UpdateClientBK.py")
+        if os.path.exists(cbk):
+            os.remove(cbk)
+        pypath_1 = os.getcwd()
+        os.chdir('PyOS_Data')
+        os.chdir(cbk)
+        bkpfile = glob.glob("*.bkp")
+        if len(bkpfile) == 0:
+            print("Failed to find restore file.")
+            os.chdir('..')
+            os.chdir(pyos_osn)
+            pyos_os_ad()
+        bkpfile_move = bkpfile[0]
+        shutil.copy2(bkpfile_move, pypath_1)
+        os.chdir('..')
+        os.chdir('..')
+        os.rename(bkpfile_move, "backup_restore.dat")
+        print("Ready to restore. Continue? [y/n]")
+        recc = input("")
+        if recc == ("y"):
+            pyos_localback()
+        else:
+            print("Cancelled.")
+            if os.path.exists("backup_restore.dat"):
+                os.remove("backup_restore.dat")
+            if os.path.exists("UpdateClientBK.py"):
+                os.remove("UpdateClientBK.py")
+            if os.path.exists(cbk):
+                os.remove(cbk)
+            os.chdir('PyOS_Data')
+            os.chdir(pyos_osn)
+            pyos_os_ad()
     if os_input == ("vdc"):
         print("PyOS Voice Input")
         pyos_vdc()
@@ -934,12 +1106,24 @@ def pyos_os_ad():
             pyos_os_ad()
     elif os_input == ("upd"):
         print("Checking for update...")
-        if pyos_upd_cc == False:
+        if pyos_upd_cc == True:
             print("No update required")
             pyos_os_ad()
         else:
+            print("Creating version backup...")
+            os.chdir('..')
+            if os.path.exists(pyos_iden_ver):
+                os.chdir(pyos_iden_ver)
+            else:
+                os.mkdir(pyos_iden_ver)
+                os.chdir(pyos_iden_ver)
             os.chdir('..')
             os.chdir('..')
+            pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
+            os.system("type PyOS.py >> " + pyos_iden_ver_file)
+            copydir = ("PyOS_Data/" + pyos_iden_ver)
+            shutil.copy2(pyos_iden_ver_file, copydir)
+            os.remove(pyos_iden_ver_file)
             pyos_update()
     elif os_input == ("upda"):
         print("Forcing update...")
