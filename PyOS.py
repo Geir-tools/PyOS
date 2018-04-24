@@ -1,4 +1,4 @@
-###.PyOS.0.0.9.8.### #
+###.PyOS.0.1.0.0.### #
 lisence = '''
 MIT License
 
@@ -27,11 +27,31 @@ Voice Recognition - https://pythonspot.com/speech-recognition-using-google-speec
  ~~ Both of these codes have been modified, but the framework was based on these.
 '''
 ######################
+print("[  OS  ] Importing core modules...")
 import os            
-os.system("cls")     
+os.system("cls")
 print("[  OK  ] OS")
 import time
 print("[  OK  ] Time")
+import platform
+print("[  OK  ] Platform")
+print("[  OK  ] Core modules imported")
+print("[  OS  ] Checking System...")
+print("[  OK  ] Machine type: " + platform.machine())
+print("[  OS  ] Checking OS...")
+wname = platform.system()
+if ("Windows") in wname:
+    print("[  OK  ] OS: " + wname)
+    print("[  OK  ] Supported OS")
+else:
+    print("[  OS  ] OS: " + wname)
+    print("You are using an unsupported OS!")
+    print("Currently, PyOS is only supported on Windows.")
+    print("Exiting in 5 seconds.")
+    time.sleep(5)
+    exit()
+print("[  OK  ] Win Version: " + platform.platform())
+print("[  OK  ] Machine supported")
 import sys
 print("[  OK  ] Sys")
 import getpass
@@ -42,8 +62,6 @@ import shutil
 print("[  OK  ] Shutil")
 import hashlib
 print("[  OK  ] Hashlib")
-import platform
-print("[  OK  ] Platform")
 import glob
 print("[  OK  ] Glob")
 import urllib.request
@@ -64,7 +82,13 @@ Thanks to Mike Atkinson and Stack Overflow for
 other various tips.
 '''
 #######
-print("[  OK  ] Defining Variables")
+print("[  OS  ] Checking for crash...")
+if os.path.exists("crashhandler.bat"):
+    print("Danger!")
+    exit()
+else:
+    print("[  OK  ] No crash detected")
+print("[  OS  ] Defining Variables")
 global pyos_ver
 global pyos_iden_ver
 global pyos_upd_cc
@@ -77,11 +101,11 @@ global pyos_fallback
 pyos_fallback = False
 code = 'pyosenckey'
 pyos_upd_cc = False
-pyos_ver = str("PyOS 0.0.9.8")
+pyos_ver = str("PyOS 0.1.0.0")
 pyos_osn = getpass.getuser()
 pyos_tempadm = False
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.0.9.8.###")
+pyos_iden_ver = ("###.PyOS.0.1.0.0.###")
 print("[  OK  ] Done")
 if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
@@ -89,7 +113,7 @@ if pyver > ("3.6"):
     print("Thanks!")
     os.system("pause")
     exit()
-if pyver <= ("3.0"):
+if pyver <= ("2.9"):
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.0 to 3.5")
     print("Thanks!")
@@ -128,6 +152,9 @@ def pyos_boot():
               except:
                 pyos_cryfail()
               print("[  OK  ] Booting!")
+              if os.path.exists("stp.dev"):
+                  print("[  OK  ] STP enabled")
+                  os.system("pause >nul")
               os.system("@mode con cols=50 lines=34")
               pyos_login()
         else:
@@ -768,6 +795,30 @@ def pyos_localback():
         os.system("echo exit() >> UpdateClientBK.py")
         os.startfile("UpdateClientBK.py")
         exit()
+def pyos_devconsole():
+    pyos_dev = input("$>> ")
+    if pyos_dev == ("help"):
+        print("help - Display this menu")
+        print("stp - Pause startup before screen clear")
+        print("mod - Install mod pkg (not implemented)")
+        print("ext - Exit dev mode")
+    if pyos_dev == ("stp"):
+        if os.path.exists("stp.dev"):
+            os.rename("stp.dev", "stp.null")
+            print("Disabled stp.")
+            pyos_devconsole()
+        if os.path.exists("stp.null"):
+            os.rename("stp.null", "stp.dev")
+            print("Enabled stp.")
+            pyos_devconsole()
+        else:
+            os.system("echo PyOS >> stp.dev")
+            print("Enabled stp.")
+            pyos_devconsole()
+    if pyos_dev == ("ext"):
+        pyos_os_ad()
+    else:
+        pyos_devconsole()
 def pyos_vdc():
     try:
         import speech_recognition as sr
@@ -903,8 +954,13 @@ def pyos_os_ad():
         print("rib - Reinstall PyOS backup")
         print("crb - Create Backup")
         print("vdc - Voice dictation")
+        print("dev - PyOS developer tools")
         print("crd - Credits")
         pyos_os_ad()
+    if os_input == ("dev"):
+        print("Dev tools are experiments.")
+        print("Use at your own risk.")
+        pyos_devconsole()
     if os_input == ("crd"):
         print(credit)
         pyos_os_ad()
