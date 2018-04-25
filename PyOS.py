@@ -1,4 +1,4 @@
-###.PyOS.0.1.0.0.### #
+###.PyOS.0.1.0.2.### #
 lisence = '''
 MIT License
 
@@ -82,12 +82,31 @@ Thanks to Mike Atkinson and Stack Overflow for
 other various tips.
 '''
 #######
-print("[  OS  ] Checking for crash...")
-if os.path.exists("crashhandler.bat"):
-    print("Danger!")
-    exit()
-else:
-    print("[  OK  ] No crash detected")
+if not os.path.exists("ske.dll"):
+    print("[  OS  ] Checking for crash...")
+    if os.path.exists("crashhandler.dll"):
+        print("[      ]")
+        print("[      ]")
+        print("[  OS  ] A crash / unexpected shutdown was detected!")
+        print("[  OS  ] If this was an error, Please report it on Github")
+        print("[  OS  ] Include details of what you were doing, etc etc")
+        print("[  OS  ] Boot will continue in 5 seconds")
+        time.sleep(1)
+        print("[      ]")
+        time.sleep(1)
+        print("[      ]")
+        time.sleep(1)
+        print("[      ]")
+        time.sleep(1)
+        print("[      ]")
+        time.sleep(1)
+        print("[      ]")
+    else:
+        print("[  OK  ] No crash detected")
+        if os.path.exists("crashhandlernull.dll"):
+            os.rename("crashhandlernull.dll", "crashhandler.dll")
+        else:
+            os.system("echo crashhandler >> crashhandler.dll")
 print("[  OS  ] Defining Variables")
 global pyos_ver
 global pyos_iden_ver
@@ -101,29 +120,61 @@ global pyos_fallback
 pyos_fallback = False
 code = 'pyosenckey'
 pyos_upd_cc = False
-pyos_ver = str("PyOS 0.1.0.0")
+pyos_ver = str("PyOS 0.1.0.2")
 pyos_osn = getpass.getuser()
 pyos_tempadm = False
 pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.1.0.0.###")
+pyos_iden_ver = ("###.PyOS.0.1.0.2.###")
 print("[  OK  ] Done")
 if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.0 to 3.5")
     print("Thanks!")
     os.system("pause")
-    exit()
+    pyos_exitscript()
 if pyver <= ("2.9"):
     print("You are using an unsupported version of Python!")
     print("PyOS works best on Python 3.0 to 3.5")
     print("Thanks!")
     os.system("pause")
-    exit()   
+    pyos_exitscript()   
 print("[  OK  ] Supported Python Version")
 pyos_aun = getpass.getuser()
 os.system("title " + pyos_ver)
 if os.path.exists("UpdateClient.py"):
     os.remove("UpdateClient.py")
+if os.path.exists("UpdateClientBK.py"):
+    os.remove("UpdateClientBK.py")
+def pyos_exitscript():
+    if os.path.exists("PyOS.py"):
+        os.rename("crashhandler.dll", "crashhandlernull.dll")
+        exit()
+    else:
+        os.chdir("..")
+        pyos_exitscript()
+def pyos_skeset():
+    if os.path.exists("PyOS.py"):
+        if os.path.exists("ske.dll"):
+            os.rename("ske.dll", "ske.null")
+            print("Disabled ske.")
+            os.chdir("PyOS_Data")
+            os.chdir(pyos_osn)
+            pyos_devconsole()
+        if os.path.exists("ske.null"):
+            os.rename("ske.null", "ske.dll")
+            print("Enabled ske.")
+            os.chdir("PyOS_Data")
+            os.chdir(pyos_osn)
+            pyos_devconsole()
+        else:
+            os.system("echo PyOS >> ske.dll")
+            print("Enabled ske.")
+            os.chdir("PyOS_Data")
+            os.chdir(pyos_osn)
+            pyos_devconsole()
+    else:
+        os.chdir("..")
+        pyos_skeset()
 def pyos_boot():
     if os.path.exists("PyOS_Data"):
         os.chdir("PyOS_Data")
@@ -320,7 +371,7 @@ def pyos_login():
         pyos_osn = (newusern)
         pyos_set()
     elif pyos_login_c == ("4"):
-        exit()
+        pyos_exitscript()
     elif pyos_login_c == ("cd"):
         pyos_tempcd = os.getcwd()
         print(pyos_tempcd)
@@ -547,12 +598,12 @@ def pyos_os_us():
         print(credit)
         pyos_os_ad()
     elif os_input == ("ext"):
-        exit()
+        pyos_exitscript()
     elif os_input == ("lgt"):
         if pyos_osn == ("tmpacc"):
             print("Exiting...")
             os.system("pause >nul")
-            exit()
+            pyos_exitscript()
         if pyos_aun == pyos_osn:
             pyos_tempadm = False
             pyos_aun = (getpass.getuser())
@@ -741,7 +792,7 @@ def pyos_os_us():
 def pyos_update():
     if os.path.exists("UpdateClient.py"):
         os.startfile("UpdateClient.py")
-        exit()
+        pyos_exitscript()
     else:
         os.system("echo import time >> UpdateClient.py")
         os.system("echo import os >> UpdateClient.py")
@@ -767,13 +818,13 @@ def pyos_update():
         os.system("echo print('Updated! Now restarting...') >> UpdateClient.py")
         os.system("echo time.sleep(2) >> UpdateClient.py")
         os.system("echo os.startfile('PyOS.py') >> UpdateClient.py")
-        os.system("echo exit() >> UpdateClient.py")
+        os.system("echo pyos_exitscript() >> UpdateClient.py")
         os.startfile("UpdateClient.py")
-        exit()
+        pyos_exitscript()
 def pyos_localback():
     if os.path.exists("UpdateClientBK.py"):
         os.startfile("UpdateClientBK.py")
-        exit()
+        pyos_exitscript()
     else:
         os.system("echo import time >> UpdateClientBK.py")
         os.system("echo import os >> UpdateClientBK.py")
@@ -792,14 +843,15 @@ def pyos_localback():
         os.system("echo print('Restored!') >> UpdateClientBK.py")
         os.system("echo time.sleep(2) >> UpdateClientBK.py")
         os.system("echo os.startfile('PyOS.py') >> UpdateClientBK.py")
-        os.system("echo exit() >> UpdateClientBK.py")
+        os.system("echo pyos_exitscript() >> UpdateClientBK.py")
         os.startfile("UpdateClientBK.py")
-        exit()
+        pyos_exitscript()
 def pyos_devconsole():
     pyos_dev = input("$>> ")
     if pyos_dev == ("help"):
         print("help - Display this menu")
         print("stp - Pause startup before screen clear")
+        print("ske - Skip boot error check")
         print("mod - Install mod pkg (not implemented)")
         print("ext - Exit dev mode")
     if pyos_dev == ("stp"):
@@ -815,8 +867,10 @@ def pyos_devconsole():
             os.system("echo PyOS >> stp.dev")
             print("Enabled stp.")
             pyos_devconsole()
+    if pyos_dev == ("ske"):
+        pyos_skeset()
     if pyos_dev == ("ext"):
-        pyos_os_ad()
+        pyos_exitscript()
     else:
         pyos_devconsole()
 def pyos_vdc():
@@ -1248,7 +1302,7 @@ def pyos_os_ad():
             os.system("pause >nul")
             pyos_os_ad()
     elif os_input == ("ext"):
-        exit()
+        pyos_exitscript()
     elif os_input == ("lgt"):
         if pyos_fallback == True:
             print("Logging out...")
@@ -1669,12 +1723,6 @@ def pyos_cryfail():
 ###########
 devmess = ('''
 :)
-So a few of you might be wondering why I'm not doing a changelog for this
-program. The answer is simple - I am. Just not yet. You see, changelogs are used
-to log both significant and tiny changes to code. Since PyOS is still in
-ridiculously early development, there is a lot of big and lil changes
-like all the time, so noting each and every one down is for the most part
-time wasting. To me, anyway.
-I'll start making a changelog when we reach V 0.1.
-Thanks! ''')
+Changelog coming soon, when I can be bothered oops
+''')
 pyos_boot()
