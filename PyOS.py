@@ -1,4 +1,4 @@
-###.PyOS.0.1.0.2.### #
+###.PyOS.0.1.0.4.### #
 lisence = '''
 MIT License
 
@@ -28,7 +28,8 @@ Voice Recognition - https://pythonspot.com/speech-recognition-using-google-speec
 '''
 ######################
 print("[  OS  ] Importing core modules...")
-import os            
+import os
+os.system("clear")
 os.system("cls")
 print("[  OK  ] OS")
 import time
@@ -113,18 +114,21 @@ global pyos_iden_ver
 global pyos_upd_cc
 global pyos_osn
 global pyos_aun
+global pyos_permaun
 global pyver
 global code
 global pyos_tempadm
 global pyos_fallback
-pyos_fallback = False
-code = 'pyosenckey'
-pyos_upd_cc = False
-pyos_ver = str("PyOS 0.1.0.2")
-pyos_osn = getpass.getuser()
-pyos_tempadm = False
-pyver = platform.python_version()
-pyos_iden_ver = ("###.PyOS.0.1.0.2.###")
+pyos_fallback = False ##used to determine how the program runs
+code = 'pyosenckey' ##used for encryption/decryption
+pyos_upd_cc = False ##used to check for updates 
+pyos_ver = str("PyOS 0.1.0.4") ##used as title
+pyos_osn = getpass.getuser() ##default user
+pyos_tempadm = False ##used if user accesses admin account during session
+pyver = platform.python_version() ##used to determine version
+pyos_iden_ver = ("###.PyOS.0.1.0.4.###") ##used to check for updates as well
+pyos_aun = getpass.getuser() ##admin user (changes)
+pyos_permaun = getpass.getuser() ##admin user (permanent)
 print("[  OK  ] Done")
 if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
@@ -139,7 +143,6 @@ if pyver <= ("2.9"):
     os.system("pause")
     pyos_exitscript()   
 print("[  OK  ] Supported Python Version")
-pyos_aun = getpass.getuser()
 os.system("title " + pyos_ver)
 if os.path.exists("UpdateClient.py"):
     os.remove("UpdateClient.py")
@@ -147,7 +150,10 @@ if os.path.exists("UpdateClientBK.py"):
     os.remove("UpdateClientBK.py")
 def pyos_exitscript():
     if os.path.exists("PyOS.py"):
-        os.rename("crashhandler.dll", "crashhandlernull.dll")
+        try:
+            os.rename("crashhandler.dll", "crashhandlernull.dll")
+        except:
+            exit()
         exit()
     else:
         os.chdir("..")
@@ -248,6 +254,45 @@ def pyos_boot():
         print("[  OK  ] Booting!")
         os.system("@mode con cols=50 lines=34")
         pyos_set()
+def pyos_dsacc():
+    os.chdir('..')
+    dirs = os.listdir(os.getcwd())
+    for number, letter in enumerate(dirs):
+        if "###.PyOS" in letter:
+            continue
+        if pyos_aun == letter:
+            continue
+        print(letter)
+    print("Enter name of account to disable/enable...")
+    accdis = input("")
+    if accdis == pyos_permaun:
+        print("Cannot disable admin account.")
+        os.chdir(pyos_osn)
+        pyos_devconsole()
+    try:
+        os.chdir(accdis)
+    except:
+        print("Invalid account!")
+        os.chdir(pyos_osn)
+        pyos_devconsole()
+    if os.path.exists("dbm.dll"):
+        os.rename("dbm.dll", "null.dlldev")
+        print("Enabled " + accdis)
+        os.chdir('..')
+        os.chdir(pyos_osn)
+        pyos_devconsole()
+    if os.path.exists("null.dlldev"):
+        os.rename("null.dlldev", "dbm.dll")
+        print("Disabled " + accdis)
+        os.chdir('..')
+        os.chdir(pyos_osn)
+        pyos_devconsole()
+    os.system("echo disableaccount >> dbm.dll")
+    os.system("attrib +h dbm.dll")
+    print("Disabled " + accdis)
+    os.chdir('..')
+    os.chdir(pyos_osn)
+    pyos_devconsole()
 def pyos_login():
     os.system("cls")
     print("##################################################")
@@ -293,6 +338,11 @@ def pyos_login():
             data = cipher_aes.decrypt_and_verify(ciphertext, tag)
         datat = data.decode('ascii')
         if datat == enterpass:
+            if os.path.exists("dbm.dll"):
+                print("Your account has been disabled.")
+                print("Contact the admin (" + pyos_permaun + ") for help.")
+                os.system("pause >nul")
+                pyos_login()
             print("Password Accepted.")
             fobj.close()
             os.system("pause >nul")
@@ -330,9 +380,12 @@ def pyos_login():
         dirs = os.listdir(os.getcwd())
         print("")
         for number, letter in enumerate(dirs):
-            trnu = number + 1
-            trnus = str(trnu)
-            print(trnus + ":", letter)
+            if "###.PyOS" in letter:
+                continue
+            if pyos_aun == letter:
+                print(letter, "(admin)")
+                continue
+            print(letter)
         print("")
         print("Enter the NAME of the user you want to switch to.")
         logswitch = input("")
@@ -352,6 +405,7 @@ def pyos_login():
         else:
             print("Invalid / Corrupted Account!")
             os.chdir('..')
+            os.chdir(pyos_osn)
             os.system("pause >nul")
             pyos_login()
     elif pyos_login_c == ("3"):
@@ -596,7 +650,7 @@ def pyos_os_us():
         pyos_os_us()
     if os_input == ("crd"):
         print(credit)
-        pyos_os_ad()
+        pyos_os_us()
     elif os_input == ("ext"):
         pyos_exitscript()
     elif os_input == ("lgt"):
@@ -763,13 +817,24 @@ def pyos_os_us():
                 data = cipher_aes.decrypt_and_verify(ciphertext, tag)
             datat = data.decode('ascii')
             if datat == tryswitch:
-                print("Temporary access granted.")
+                os.chdir('..')
+                os.chdir(pyos_aun)
+                timedate = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
+                timedateformat = timedate.replace(":", ".")
+                logsucc = str("The user '" + pyos_osn + "' accessed your account on/at '" + timedate + "'")
+                logname = str("successlogin " + timedateformat + ".log")
+                with open(logname, 'w') as log:
+                    log.write(logsucc)
+                    log.close()
                 os.chdir('..')
                 os.chdir(pyos_osn)
+                pyos_tempaun = pyos_aun
                 pyos_aun == pyos_osn
                 global pyos_tempadm
                 pyos_tempadm = True
                 fobj.close()
+                print("Temporary access granted.")
+                print(pyos_tempaun + " has been alerted.")
                 os.system("pause >nul")
                 pyos_os_ad()
             os.chdir('..')
@@ -852,6 +917,7 @@ def pyos_devconsole():
         print("help - Display this menu")
         print("stp - Pause startup before screen clear")
         print("ske - Skip boot error check")
+        print("dsb - Disable user accounts")
         print("mod - Install mod pkg (not implemented)")
         print("ext - Exit dev mode")
     if pyos_dev == ("stp"):
@@ -869,8 +935,12 @@ def pyos_devconsole():
             pyos_devconsole()
     if pyos_dev == ("ske"):
         pyos_skeset()
+    if pyos_dev == ("dsb"):
+        pyos_dsacc()
+    if pyos_dev == ("rup"):
+        pyos_devconsole()
     if pyos_dev == ("ext"):
-        pyos_exitscript()
+        pyos_os_ad()
     else:
         pyos_devconsole()
 def pyos_vdc():
@@ -1216,7 +1286,7 @@ def pyos_os_ad():
             pyos_os_ad()
     elif os_input == ("upd"):
         print("Checking for update...")
-        if pyos_upd_cc == True:
+        if pyos_upd_cc == False:
             print("No update required")
             pyos_os_ad()
         else:
@@ -1722,7 +1792,13 @@ def pyos_cryfail():
         pyos_cryfail()
 ###########
 devmess = ('''
+PyOS 0.1.0.4 ----
+- Bug fixes, around the login screen where PyOS backups would be listed as accounts
+  and trying to log in to them would cause the program to navigate to the wrong directory
+- Fixed massive security flaw with crd
+- Added successful login logs for admins
+- Added some more admin tools, like disabling user accounts.
+- Plans for future - ssh with clients connecting to admin remotely, more admin tools, deeper intergration with other python scripts.
 :)
-Changelog coming soon, when I can be bothered oops
 ''')
 pyos_boot()
