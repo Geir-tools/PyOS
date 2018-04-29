@@ -1,4 +1,4 @@
-###.PyOS.0.1.0.4.### #
+###.PyOS.0.1.0.6.### #
 lisence = '''
 MIT License
 
@@ -120,13 +120,13 @@ global code
 global pyos_tempadm
 global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs
-code = 'pyosenckey' ##used for encryption/decryption
+code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.0.4") ##used as title
+pyos_ver = str("PyOS 0.1.0.6") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.0.4.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.0.6.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 print("[  OK  ] Done")
@@ -275,24 +275,71 @@ def pyos_dsacc():
         print("Invalid account!")
         os.chdir(pyos_osn)
         pyos_devconsole()
-    if os.path.exists("dbm.dll"):
-        os.rename("dbm.dll", "null.dlldev")
+    if os.path.exists("dbm.bin"):
+        os.rename("dbm.bin", "dbmnull.bin")
         print("Enabled " + accdis)
         os.chdir('..')
         os.chdir(pyos_osn)
         pyos_devconsole()
-    if os.path.exists("null.dlldev"):
-        os.rename("null.dlldev", "dbm.dll")
+    if os.path.exists("null.bin"):
+        os.rename("null.bin", "dbm.bin")
         print("Disabled " + accdis)
         os.chdir('..')
         os.chdir(pyos_osn)
         pyos_devconsole()
-    os.system("echo disableaccount >> dbm.dll")
-    os.system("attrib +h dbm.dll")
+    os.system("echo disableaccount >> dbm.bin")
+    os.system("attrib +h dbm.bin")
     print("Disabled " + accdis)
     os.chdir('..')
     os.chdir(pyos_osn)
     pyos_devconsole()
+def pyos_accrecover():
+    os.system("cls")
+    print("##################################################")
+    print("")
+    print("                      Py OS                       ")
+    print("                     Account                      ")
+    print("                     Manager                      ")
+    print("")
+    print("")
+    print("###################################################")
+    print("")
+    print("Enter a new password for your account...")
+    passwordcheck = getpass.getpass("")
+    print("Please type your password again.")
+    passwordre = getpass.getpass("")
+    if passwordcheck == passwordre:
+        key = RSA.generate(2048)
+        encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+                protection="scryptAndAES128-CBC")
+        with open('prkey.bin', 'wb') as f:
+                f.write(encrypted_key)
+                os.system("attrib +h prkey.bin")
+        with open('pukey.bin', 'wb') as f:
+                f.write(key.publickey().exportKey())
+                os.system("attrib +h pukey.bin")
+        with open('data_pm.bin', 'wb') as out_file:
+            recipient_key = RSA.import_key(
+                open('pukey.bin').read())
+            session_key = get_random_bytes(16)
+            cipher_rsa = PKCS1_OAEP.new(recipient_key)
+            out_file.write(cipher_rsa.encrypt(session_key))
+            cipher_aes = AES.new(session_key, AES.MODE_EAX)
+            data = bytes(passwordcheck, encoding='utf-8')
+            ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+            out_file.write(cipher_aes.nonce)
+            out_file.write(tag)
+            out_file.write(ciphertext)
+            os.system("attrib +h data_pm.bin")
+        print("")
+        print("Setup is complete!")
+        print("Press any key to go to menu.")
+        os.system("pause >nul")
+        pyos_login()
+    else:
+        print("Passwords do not match!")
+        os.system("pause >nul")
+        pyos_setps()
 def pyos_login():
     os.system("cls")
     print("##################################################")
@@ -325,20 +372,26 @@ def pyos_login():
             pyos_fallbacklogin()
         print("Please enter your password, " + pyos_osn)
         enterpass = getpass.getpass("")
-        with open('data_pm.bin', 'rb') as fobj:
-            private_key = RSA.import_key(
-                open('prkey.bin').read(),
-                passphrase=code)
-            enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
-                                                        for x in (private_key.size_in_bytes(), 
-                                                        16, 16, -1) ]
-            cipher_rsa = PKCS1_OAEP.new(private_key)
-            session_key = cipher_rsa.decrypt(enc_session_key)
-            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-            data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        try:
+            with open('data_pm.bin', 'rb') as fobj:
+                private_key = RSA.import_key(
+                    open('prkey.bin').read(),
+                    passphrase=code)
+                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                            for x in (private_key.size_in_bytes(), 
+                                                            16, 16, -1) ]
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                session_key = cipher_rsa.decrypt(enc_session_key)
+                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        except:
+            print("Failed to decrypt password.")
+            print("Ensure the key is correct in the source code.")
+            os.system("pause")
+            pyos_login()
         datat = data.decode('ascii')
         if datat == enterpass:
-            if os.path.exists("dbm.dll"):
+            if os.path.exists("dbm.bin"):
                 print("Your account has been disabled.")
                 print("Contact the admin (" + pyos_permaun + ") for help.")
                 os.system("pause >nul")
@@ -389,6 +442,8 @@ def pyos_login():
         print("")
         print("Enter the NAME of the user you want to switch to.")
         logswitch = input("")
+        if logswitch == ("admin"):
+            logswitch = pyos_permaun
         try:
             os.chdir(logswitch)
         except:
@@ -403,7 +458,14 @@ def pyos_login():
             os.system("pause >nul")
             pyos_login()
         else:
-            print("Invalid / Corrupted Account!")
+            if os.path.exists("appdata"):
+                print("Corrupted Account!")
+                recover = input("Attempt To Recover account? [y/n] ")
+                if recover == ("y"):
+                    pyos_accrecover()
+                else:
+                    pyos_login()
+            print("Invalid account!")
             os.chdir('..')
             os.chdir(pyos_osn)
             os.system("pause >nul")
@@ -783,6 +845,10 @@ def pyos_os_us():
             trnus = str(trnu)
             if (".bin") in letter:
                 continue
+            if letter == "dbmnull.bin":
+                continue
+            if letter == "dbm.bin":
+                continue
             print(letter)
         print("")
         print("Encrypted files found:")
@@ -918,6 +984,7 @@ def pyos_devconsole():
         print("stp - Pause startup before screen clear")
         print("ske - Skip boot error check")
         print("dsb - Disable user accounts")
+        print("acu - Access user account")
         print("mod - Install mod pkg (not implemented)")
         print("ext - Exit dev mode")
     if pyos_dev == ("stp"):
@@ -937,12 +1004,28 @@ def pyos_devconsole():
         pyos_skeset()
     if pyos_dev == ("dsb"):
         pyos_dsacc()
-    if pyos_dev == ("rup"):
-        pyos_devconsole()
+    if pyos_dev == ("acu"):
+        pyos_accessuser()
     if pyos_dev == ("ext"):
         pyos_os_ad()
     else:
         pyos_devconsole()
+def pyos_accessuser():
+    os.chdir('..')
+    dirs = os.listdir(os.getcwd())
+    for number, letter in enumerate(dirs):
+        if "###.PyOS" in letter:
+            continue
+        print(letter)
+    print("Enter name of account to access...")
+    access = input("")
+    try:
+        os.chdir(access)
+    except:
+        print("Invalid account!")
+        os.chdir(pyos_osn)
+    pyos_osn == access
+    print("Now accessing " + access + "'s account.")
 def pyos_vdc():
     try:
         import speech_recognition as sr
@@ -1058,32 +1141,33 @@ def pyos_os_ad():
         print("lgt - Logs out of account")
         print("cps - Change Password")
         print("app - Displays list of available apps")
-        print(" ~~Type 'app [appname]' to launch direct")
+        print(" ~~Use 'app [appname]' to launch direct")
         print("cls - Clears screen")
         if pyos_fallback == False:
-            print("enc - Encryption Tool")
-            print("dnc - Read Encrypted Files")
+            print("enc [filename] [passphrase] - Encryption Tool")
+            print("dnc [filename] [passphrase] - Read Encrypted Files")
         print("typ - Word Processor")
         print("rdf - Read Files")
         print("upd - Check For Update")
-        print(" ~~Use 'upda' to force update")
+        print(" ~~Use 'upd a' to force update")
         print("cmd - Command Prompt")
         print("ist - Install Apps")
         print("run - Run Files")
-        print(" ~~Type 'run [file] to launch direct")
+        print(" ~~Use 'run [file]' to launch direct")
         print("lsf - List files")
-        print(" ~~Use 'lsfa' to return all filetypes")
+        print(" ~~Use 'lsf a' to return all filetypes")
         print("log - See admin logs")
-        print(" ~~Use 'loga' to see archived logs")
+        print(" ~~Use 'log a' to see archived logs")
         print("rib - Reinstall PyOS backup")
         print("crb - Create Backup")
         print("vdc - Voice dictation")
-        print("dev - PyOS developer tools")
+        print("adm - Admin tools")
         print("crd - Credits")
         pyos_os_ad()
-    if os_input == ("dev"):
-        print("Dev tools are experiments.")
-        print("Use at your own risk.")
+    if os_input == ("adm"):
+        if not pyos_osn == pyos_permaun:
+            print("Access denied.")
+            pyos_os_ad()
         pyos_devconsole()
     if os_input == ("crd"):
         print(credit)
@@ -1092,6 +1176,7 @@ def pyos_os_ad():
             os.chdir('..')
             if os.path.exists(pyos_iden_ver):
                 print("Backup already exists for this version.")
+                os.chdir(pyos_osn)
                 pyos_os_ad()
             else:
                 print("Creating backup...")
@@ -1152,6 +1237,7 @@ def pyos_os_ad():
             print("Cancelled.")
             os.chdir(pyos_osn)
             pyos_os_ad()
+        print(cbk)
         print("Preparing to restore...")
         os.chdir('..')
         if os.path.exists("backup_restore.dat"):
@@ -1159,14 +1245,21 @@ def pyos_os_ad():
         if os.path.exists("UpdateClientBK.py"):
             os.remove("UpdateClientBK.py")
         if os.path.exists(cbk):
-            os.remove(cbk)
+            try:
+                os.remove(cbk)
+            except:
+                pass
         pypath_1 = os.getcwd()
         os.chdir('PyOS_Data')
         os.chdir(cbk)
         bkpfile = glob.glob("*.bkp")
         if len(bkpfile) == 0:
-            print("Failed to find restore file.")
+            print("Failed to locate restore file.")
             os.chdir('..')
+            try:
+                os.remove(cbk)
+            except:
+                pass
             os.chdir(pyos_osn)
             pyos_os_ad()
         bkpfile_move = bkpfile[0]
@@ -1237,7 +1330,7 @@ def pyos_os_ad():
         else:
             print("Failed to open log requested.")
             pyos_os_ad()
-    elif os_input == ("loga"):
+    elif os_input == ("log a"):
         if not os.path.exists("archlogs"):
             print("No archived logs!")
             print("Logs are auto archived when read.")
@@ -1305,7 +1398,7 @@ def pyos_os_ad():
             shutil.copy2(pyos_iden_ver_file, copydir)
             os.remove(pyos_iden_ver_file)
             pyos_update()
-    elif os_input == ("upda"):
+    elif os_input == ("upd a"):
         print("Forcing update...")
         os.chdir('..')
         os.chdir('..')
@@ -1425,16 +1518,121 @@ def pyos_os_ad():
         print("                      -ADM-                       ")
         print("##################################################")
         pyos_os_ad()
-    elif os_input == ("enc"):
+    elif ("enc") in os_input:
         if pyos_fallback == True:
             print("Disabled in fallback mode.")
             pyos_os_ad()
-        pyos_enc()
-    elif os_input == ("dnc"):
+        encls = os_input.split()
+        if not len(encls) == 3:
+            print("Usage: enc [filename] [passphrase]")
+            pyos_os_ad()
+        pyos_enc_file = encls[1]
+        passph = encls[2]
+        pyos_enc_file_txt = (pyos_enc_file + ".txt")
+        if os.path.exists(pyos_enc_file_txt):
+            with open(pyos_enc_file_txt, 'rb') as pre:
+                for line in pre:
+                    if passph == (""):
+                        print("Passphrase must be more than 0 characters!")
+                        os.system("pause >nul")
+                        pyos_enc()
+                    print("Encrypting...")
+                    pyos_encdir = (pyos_enc_file + "_enc")
+                    os.mkdir(pyos_encdir)
+                    with open(pyos_enc_file_txt, 'r') as x:
+                        shutil.copy2(pyos_enc_file_txt, pyos_encdir)
+                    x.close()
+                    os.chdir(pyos_enc_file + "_enc")
+                    key = RSA.generate(2048)
+                    encrypted_key = key.exportKey(passphrase=passph, pkcs=8, 
+                            protection="scryptAndAES128-CBC")
+                    with open('prkey.file.bin', 'wb') as f:
+                            f.write(encrypted_key)
+                            os.system("attrib +h prkey.file.bin")
+                    with open('pukey.file.bin', 'wb') as f:
+                            f.write(key.publickey().exportKey())
+                            os.system("attrib +h pukey.file.bin")
+                    with open('data.file.bin', 'wb') as out_file:
+                        recipient_key = RSA.import_key(
+                            open('pukey.file.bin').read())
+                        session_key = get_random_bytes(16)
+                        cipher_rsa = PKCS1_OAEP.new(recipient_key)
+                        out_file.write(cipher_rsa.encrypt(session_key))
+                        cipher_aes = AES.new(session_key, AES.MODE_EAX)
+                        data = bytes(line)
+                        ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+                        out_file.write(cipher_aes.nonce)
+                        out_file.write(tag)
+                        out_file.write(ciphertext)
+                        os.system("attrib +h data.file.bin")
+                        os.remove(pyos_enc_file_txt)
+                        f.close()
+                        out_file.close()
+                        pre.close()
+                        print("Encrypted!")
+                        os.chdir('..')
+                        os.remove(pyos_enc_file_txt)
+                        pyos_os_ad()
+        else:
+            print("File not found!")
+            pyos_os_ad()
+    elif ("dnc") in os_input:
         if pyos_fallback == True:
             print("Disabled in fallback mode.")
             pyos_os_ad()
-        pyos_dnc()
+        dncls = os_input.split()
+        if not len(dncls) == 3:
+            print("Usage: dnc [filename] [passphrase]")
+            pyos_os_ad()
+        pyos_dnc_file = dncls[1]
+        passph = dncls[2]
+        pyos_dnc_file_enc = (pyos_dnc_file + "_enc")
+        if os.path.exists(pyos_dnc_file_enc):
+            os.chdir(pyos_dnc_file_enc)
+            with open('data.file.bin', 'rb') as fobj:
+                try:
+                    private_key = RSA.import_key(
+                        open('prkey.file.bin').read(),
+                        passphrase=passph)
+                    enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                                for x in (private_key.size_in_bytes(), 
+                                                                16, 16, -1) ]
+                except:
+                    print("Incorrect passphrase!")
+                    os.chdir('..')
+                    os.system("pause >nul")
+                    if pyos_osn == pyos_aun:
+                        pyos_os_ad()
+                    else:
+                        pyos_os_us()
+                try:
+                    cipher_rsa = PKCS1_OAEP.new(private_key)
+                    session_key = cipher_rsa.decrypt(enc_session_key)
+                    cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                    data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+                except:
+                    print("An error occured when decrypting.")
+                    print("Please try again.")
+                    os.system("Pause >nul")
+                    os.chdir('..')
+                    pyos_dnc()
+            print("Decrypted file contents...")
+            print("")
+            datat = data.decode('ascii')
+            print(datat)
+            os.system("pause >nul")
+            os.chdir('..')
+            if pyos_osn == pyos_aun:
+                pyos_os_ad()
+            else:
+                pyos_os_us()
+        else:
+            print("File not found!")
+            os.system("pause >nul")
+            if pyos_osn == pyos_aun:
+                pyos_os_ad()
+            else:
+                pyos_os_us()
     elif os_input == ("typ"):
         print("")
         print("###")
@@ -1601,7 +1799,7 @@ def pyos_os_ad():
             print(letter)
         print("")
         pyos_os_ad()
-    elif os_input == ("lsfa"):
+    elif os_input == ("lsf a"):
         filesa = glob.glob("*")
         print("")
         print("Files found:")
@@ -1799,6 +1997,14 @@ PyOS 0.1.0.4 ----
 - Added successful login logs for admins
 - Added some more admin tools, like disabling user accounts.
 - Plans for future - ssh with clients connecting to admin remotely, more admin tools, deeper intergration with other python scripts.
+
+PyOS 0.1.0.6 ----
+- More bug fixes, including failing to switch directories after crb returns "backup already created"
+- Edited encryption / decryption for admins
+- Added ability to restore corrupted accounts
+- Changed account disable method
+- Slightly edited some commands
+- Plans for future - Same as before lol
 :)
 ''')
 pyos_boot()
