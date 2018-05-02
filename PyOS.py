@@ -1,4 +1,4 @@
-###.PyOS.0.1.0.6.### #
+###.PyOS.0.1.0.8.### #
 lisence = '''
 MIT License
 
@@ -122,11 +122,11 @@ global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.0.6") ##used as title
+pyos_ver = str("PyOS 0.1.0.8") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.0.6.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.0.8.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 print("[  OK  ] Done")
@@ -528,15 +528,14 @@ def pyos_set():
     pyos_dr = os.getcwd()
     if not "PyOS_Data" in pyos_dr:
         os.chdir("PyOS_Data")
-    if not pyos_osn in pyos_dr:
-        if not os.path.exists(pyos_osn):
-            os.mkdir(pyos_osn)
-            os.chdir(pyos_osn)
+    if not os.path.exists(pyos_osn):
+        os.mkdir(pyos_osn)
+        os.chdir(pyos_osn)
+        os.mkdir('appdata')
+    if os.path.exists(pyos_osn):
+        os.chdir(pyos_osn)
+        if not os.path.exists("appdata"):
             os.mkdir('appdata')
-        if os.path.exists(pyos_osn):
-            os.chdir(pyos_osn)
-            if not os.path.exists("appdata"):
-                os.mkdir('appdata')
     os.system("@mode con cols=50 lines=34")
     if pyos_fallback == True:
         print("##################################################")
@@ -559,7 +558,7 @@ def pyos_set():
     print("Hi, " + pyos_osn + "!")
     if pyos_fallback == True:
         pyos_setpsf()
-    print("We're going to create an account for you.")
+    print("Let's set up your account.")
     print("Please enter a password.")
     print("Keystrokes will not be echoed.")
     pyos_setps()
@@ -949,7 +948,7 @@ def pyos_update():
         os.system("echo print('Updated! Now restarting...') >> UpdateClient.py")
         os.system("echo time.sleep(2) >> UpdateClient.py")
         os.system("echo os.startfile('PyOS.py') >> UpdateClient.py")
-        os.system("echo pyos_exitscript() >> UpdateClient.py")
+        os.system("echo exit() >> UpdateClient.py")
         os.startfile("UpdateClient.py")
         pyos_exitscript()
 def pyos_localback():
@@ -974,7 +973,7 @@ def pyos_localback():
         os.system("echo print('Restored!') >> UpdateClientBK.py")
         os.system("echo time.sleep(2) >> UpdateClientBK.py")
         os.system("echo os.startfile('PyOS.py') >> UpdateClientBK.py")
-        os.system("echo pyos_exitscript() >> UpdateClientBK.py")
+        os.system("echo exit() >> UpdateClientBK.py")
         os.startfile("UpdateClientBK.py")
         pyos_exitscript()
 def pyos_devconsole():
@@ -1158,6 +1157,7 @@ def pyos_os_ad():
         print(" ~~Use 'lsf a' to return all filetypes")
         print("log - See admin logs")
         print(" ~~Use 'log a' to see archived logs")
+        print(" ~~Use 'log r' to auto print all unread logs")
         print("rib - Reinstall PyOS backup")
         print("crb - Create Backup")
         print("vdc - Voice dictation")
@@ -1289,7 +1289,7 @@ def pyos_os_ad():
         checklogs = glob.glob("*.log")
         if len(checklogs) == 0:
             print("No new logs!")
-            print("If other users attempt to access your account and fail, their attempts will appear here.")
+            print("Other user's actions will appear here.")
             print("")
             pyos_os_ad()
         print("")
@@ -1317,8 +1317,8 @@ def pyos_os_ad():
             with open(logchoice, 'r') as rlo:
                 for line in rlo:
                     print(line)
-                    os.system("pause >nul")
-            print("Archiving log...")
+            print("")
+            print("Log archived.")
             logrename = logchoice.replace(".log", "")
             logrename = (logrename + "_archive.alg")
             os.rename(logchoice, logrename)
@@ -1377,6 +1377,79 @@ def pyos_os_ad():
             print("Failed to open log requested.")
             os.chdir('..')
             pyos_os_ad()
+    elif os_input == ("log r"):
+        checklogs = glob.glob("*.log")
+        if len(checklogs) == 0:
+            print("No new logs!")
+            print("Other user's actions will appear here.")
+            print("")
+            pyos_os_ad()
+        loglen = len(checklogs)
+        print(loglen, "Unread Logs.")
+        for log in range(loglen):
+            checklogs = glob.glob("*.log")
+            logchoice = checklogs[0]
+            with open(logchoice, 'r') as rlo:
+                for line in rlo:
+                    print(line)
+            print("")
+            print("Log archived.")
+            print("")
+            logrename = logchoice.replace(".log", "")
+            logrename = (logrename + "_archive.alg")
+            os.rename(logchoice, logrename)
+            if not os.path.exists("archlogs"):
+                os.mkdir("archlogs")
+            shutil.move(logrename, "archlogs")
+            rlo.close()
+        pyos_os_ad()
+    elif os_input == ("log a"):
+        if not os.path.exists("archlogs"):
+            print("No archived logs!")
+            print("Logs are auto archived when read.")
+            pyos_os_ad()
+        os.chdir("archlogs")
+        checklogs = glob.glob("*.alg")
+        if len(checklogs) == 0:
+            print("No archived logs!")
+            print("Logs are auto archived when read.")
+            os.chdir('..')
+            pyos_os_ad()
+        print("")
+        print("Archived logs...")
+        print("")
+        for number, letter in enumerate(checklogs):
+            trnu = number + 1
+            trnus = str(trnu)
+            print(trnus + ":", letter)
+        print("")
+        print("Enter number of log to read...")
+        logchoice_r = input("")
+        try:
+            logchoice = int(logchoice_r)
+        except:
+            print("Illegal characters used!")
+            os.chdir('..')
+            pyos_os_ad()
+        logchoice = logchoice - 1
+        try:
+            logchoice = checklogs[logchoice]
+        except:
+            print("Failed to open log requested.")
+            os.chdir('..')
+            pyos_os_ad()
+        if os.path.exists(logchoice):
+            with open(logchoice, 'r') as rlo:
+                for line in rlo:
+                    print(line)
+                    os.system("pause >nul")
+            rlo.close()
+            os.chdir('..')
+            pyos_os_ad()
+        else:
+            print("Failed to open log requested.")
+            os.chdir('..')
+            pyos_os_ad()        
     elif os_input == ("upd"):
         print("Checking for update...")
         if pyos_upd_cc == False:
@@ -1462,7 +1535,6 @@ def pyos_os_ad():
             pyos_os_ad()
         else:
             print("Passwords do not match!")
-            os.system("pause >nul")
             pyos_os_ad()
     elif os_input == ("ext"):
         pyos_exitscript()
@@ -1477,7 +1549,7 @@ def pyos_os_ad():
         pyos_login()
     elif ("run") in os_input:
         if os_input == ("run"):
-            print("Please specify file!")
+            print("Usage: run [filename]")
             pyos_os_ad()
         else:
             try:
@@ -1635,8 +1707,8 @@ def pyos_os_ad():
                 pyos_os_us()
     elif os_input == ("typ"):
         print("")
-        print("###")
         print("Start typing to begin...")
+        print("")
         pyos_word = input("")
         print("")
         print("Enter name for file.")
@@ -1664,9 +1736,12 @@ def pyos_os_ad():
             print("Saved!")
             pw.close()
             pyos_os_ad()
-    elif os_input == ("rdf"):
-        print("Enter file name to open.")
-        pyos_read = input("")
+    elif "rdf" in os_input:
+        rdfls = os_input.split()
+        if not len(rdfls) == 2:
+            print("Usage: rdf [filename]")
+            pyos_os_ad()
+        pyos_read = rdfls[1]
         if (".") in pyos_read:
             if os.path.exists(pyos_read):
                 print(pyos_read + " Contains...")
@@ -2005,6 +2080,16 @@ PyOS 0.1.0.6 ----
 - Changed account disable method
 - Slightly edited some commands
 - Plans for future - Same as before lol
+
+PyOS 0.1.0.8 ----
+- Changed no log message to better suit how logs now work
+- Fixed updater trying to exit with pyos_exitscript()
+- Made rdf in line
+- Changed run error message
+- Added "log r" function
+- Fixed setup sequence??? Apparently had issues creating first account, I wonder how many problems that caused oops
+
 :)
+
 ''')
 pyos_boot()
