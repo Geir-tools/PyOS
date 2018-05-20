@@ -1,4 +1,4 @@
-###.PyOS.0.1.0.8.### #
+###.PyOS.0.1.1.0.### #
 lisence = '''
 MIT License
 
@@ -122,11 +122,11 @@ global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.0.8") ##used as title
+pyos_ver = str("PyOS 0.1.1.0") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.0.8.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.1.0.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 print("[  OK  ] Done")
@@ -1168,15 +1168,22 @@ def pyos_os_ad():
         if not pyos_osn == pyos_permaun:
             print("Access denied.")
             pyos_os_ad()
+        if pyos_fallback == True:
+            print("Disabled in fallback mode.")
+            pyos_os_ad()
         pyos_devconsole()
     if os_input == ("crd"):
         print(credit)
         pyos_os_ad()
     if os_input == ("crb"):
             os.chdir('..')
+            if pyos_fallback == True:
+                os.chdir('..')
             if os.path.exists(pyos_iden_ver):
                 print("Backup already exists for this version.")
                 os.chdir(pyos_osn)
+                if pyos_fallback == True:
+                    os.chdir('fallback')
                 pyos_os_ad()
             else:
                 print("Creating backup...")
@@ -1194,16 +1201,23 @@ def pyos_os_ad():
                 os.remove(pyos_iden_ver_file)
                 os.chdir("PyOS_Data")
                 os.chdir(pyos_osn)
+                if pyos_fallback == True:
+                    os.chdir('fallback')
                 print("Backup Created!")
                 pyos_os_ad()
     if os_input == ("rib"):
         print("Finding backups...")
         os.chdir('..')
+        if pyos_fallback == True:
+            os.chdir('..')
         trubacks = []
         checkbackups = glob.glob('*')
         if len(checkbackups) == 0:
             print("No backups!")
             print("You can create one by using 'cbk'")
+            os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
         print("")
         print("Found these backups.")
@@ -1229,6 +1243,8 @@ def pyos_os_ad():
         except:
             print("Cancelled.")
             os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
         cbk = cbk - 1
         try:
@@ -1236,6 +1252,8 @@ def pyos_os_ad():
         except:
             print("Cancelled.")
             os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
         print(cbk)
         print("Preparing to restore...")
@@ -1261,6 +1279,8 @@ def pyos_os_ad():
             except:
                 pass
             os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
         bkpfile_move = bkpfile[0]
         shutil.copy2(bkpfile_move, pypath_1)
@@ -1281,6 +1301,8 @@ def pyos_os_ad():
                 os.remove(cbk)
             os.chdir('PyOS_Data')
             os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
     if os_input == ("vdc"):
         print("PyOS Voice Input")
@@ -2088,6 +2110,10 @@ PyOS 0.1.0.8 ----
 - Changed run error message
 - Added "log r" function
 - Fixed setup sequence??? Apparently had issues creating first account, I wonder how many problems that caused oops
+
+PyOS 0.1.1.0 ----
+- Increased support for fallback mode, including fixing the backup system and incorrect directory changes
+- Disabled admin tools in fallback mode
 
 :)
 
