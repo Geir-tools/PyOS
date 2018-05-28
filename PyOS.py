@@ -1,4 +1,4 @@
-###.PyOS.0.1.1.0.### #
+###.PyOS.0.1.1.2.### #
 lisence = '''
 MIT License
 
@@ -67,6 +67,8 @@ import glob
 print("[  OK  ] Glob")
 import urllib.request
 print("[  OK  ] Urllib.request")
+import random
+print("[  OK  ] Random")
 ##################################
 ##################################################
 global credit
@@ -122,11 +124,11 @@ global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.1.0") ##used as title
+pyos_ver = str("PyOS 0.1.1.2") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.1.0.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.1.2.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 print("[  OK  ] Done")
@@ -1622,7 +1624,11 @@ def pyos_os_ad():
             pyos_os_ad()
         pyos_enc_file = encls[1]
         passph = encls[2]
-        pyos_enc_file_txt = (pyos_enc_file + ".txt")
+        passex = pyos_enc_file.split(".")
+        if not len(passex) == 2:
+            print("Specify Filetype!")
+            pyos_os_ad()
+        pyos_enc_file_txt = (pyos_enc_file)
         if os.path.exists(pyos_enc_file_txt):
             with open(pyos_enc_file_txt, 'rb') as pre:
                 for line in pre:
@@ -1632,11 +1638,21 @@ def pyos_os_ad():
                         pyos_enc()
                     print("Encrypting...")
                     pyos_encdir = (pyos_enc_file + "_enc")
+                    if os.path.exists(pyos_encdir):
+                        print("Encrypted file already exists!")
+                        while True:
+                            encr = random.randint(1, 99)
+                            encr = str(encr)
+                            pyos_encdir = (encr + pyos_encdir)
+                            if os.path.exists(pyos_encdir):
+                                continue
+                            break
+                        print("Encrypting as " + pyos_encdir)
                     os.mkdir(pyos_encdir)
                     with open(pyos_enc_file_txt, 'r') as x:
                         shutil.copy2(pyos_enc_file_txt, pyos_encdir)
                     x.close()
-                    os.chdir(pyos_enc_file + "_enc")
+                    os.chdir(pyos_encdir)
                     key = RSA.generate(2048)
                     encrypted_key = key.exportKey(passphrase=passph, pkcs=8, 
                             protection="scryptAndAES128-CBC")
@@ -1659,7 +1675,12 @@ def pyos_os_ad():
                         out_file.write(tag)
                         out_file.write(ciphertext)
                         os.system("attrib +h data.file.bin")
-                        os.remove(pyos_enc_file_txt)
+                        try:
+                            os.remove(pyos_enc_file_txt)
+                        except:
+                            print("Failed to delete file.")
+                            print("Encryption succeeded, but original file was not deleted.")
+                            print("Most likely permission error.")
                         f.close()
                         out_file.close()
                         pre.close()
@@ -1714,7 +1735,6 @@ def pyos_os_ad():
             print("")
             datat = data.decode('ascii')
             print(datat)
-            os.system("pause >nul")
             os.chdir('..')
             if pyos_osn == pyos_aun:
                 pyos_os_ad()
@@ -1722,7 +1742,8 @@ def pyos_os_ad():
                 pyos_os_us()
         else:
             print("File not found!")
-            os.system("pause >nul")
+            print("-- If you encrypted your file after PyOS 0.1.1.2,")
+            print("   Ensure you include filetype for decrypting.")
             if pyos_osn == pyos_aun:
                 pyos_os_ad()
             else:
@@ -1908,6 +1929,54 @@ def pyos_os_ad():
         out = os_input.replace("echo ", "")
         print(out)
         pyos_os_ad()
+    elif "add" in os_input:
+        add = os_input.split()
+        if not len(add) == 3:
+            print("Missing integers!")
+            pyos_os_ad()
+        try:
+            num = float(add[1]) + float(add[2])
+        except:
+            print("Use Numbers!")
+            pyos_os_ad()
+        print(num)
+        pyos_os_ad()
+    elif "sub" in os_input:
+        sub = os_input.split()
+        if not len(sub) == 3:
+            print("Missing integers!")
+            pyos_os_ad()
+        try:
+            num = float(sub[1]) - float(sub[2])
+        except:
+            print("Use Numbers!")
+            pyos_os_ad()
+        print(num)
+        pyos_os_ad()
+    elif "mul" in os_input:
+        mul = os_input.split()
+        if not len(mul) == 3:
+            print("Missing integers!")
+            pyos_os_ad()
+        try:
+            num = float(mul[1]) * float(mul[2])
+        except:
+            print("Use Numbers!")
+            pyos_os_ad()
+        print(num)
+        pyos_os_ad()
+    elif "div" in os_input:
+        mul = os_input.split()
+        if not len(mul) == 3:
+            print("Missing integers!")
+            pyos_os_ad()
+        try:
+            num = float(mul[1]) / float(mul[2])
+        except:
+            print("Use Numbers!")
+            pyos_os_ad()
+        print(num)
+        pyos_os_ad()
     else:
         print(os_input + " - Bad Input")
         pyos_os_ad()
@@ -2062,14 +2131,11 @@ def pyos_cryfail():
         os.system("pause >nul")
         pyos_cryfail()
     if cryfail == ("2"):
-        try:
-            os.system("pip install pycryptodomex")
-        except:
-            print("Failed.")
-            print("Try adding Python to PATH, then try again.")
-            os.system("pause")
-            pyos_cryfail()
-        print("Successfully installed.")
+        os.system("pip install pycryptodomex")
+        print("")
+        print("")
+        print("If install failed, try adding Pip to PATH")
+        print("If it worked, try booting.")
         print("Now restarting...")
         os.system("pause >nul")
         pyos_boot()
@@ -2114,6 +2180,13 @@ PyOS 0.1.0.8 ----
 PyOS 0.1.1.0 ----
 - Increased support for fallback mode, including fixing the backup system and incorrect directory changes
 - Disabled admin tools in fallback mode
+
+PyOS 0.1.1.2 ----
+- Added workaround for duplicate encryption files
+- Encryption now supports all filetypes
+- Decryption "file not found" message changed
+- Added add, subtract, multiply and divide features.
+
 
 :)
 
