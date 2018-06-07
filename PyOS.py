@@ -1,4 +1,4 @@
-###.PyOS.0.1.1.4.### #
+###.PyOS.0.1.1.6.### #
 lisence = '''
 MIT License
 
@@ -125,11 +125,11 @@ global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.1.4") ##used as title
+pyos_ver = str("PyOS 0.1.1.6") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.1.4.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.1.6.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key'
@@ -304,14 +304,14 @@ def pyos_0114setupuser():
                 print("##################################################")
                 print("                      Py OS                       ")
                 print("                       Sys                        ")
-                print("                      -ADM-                       ")
+                print("                      -USR-                       ")
                 print("##################################################")
                 checkforlog = glob.glob("*.log")
                 if not len(checkforlog) == 0:
                     logam = len(checkforlog)
                     logam = str(logam)
                     print("You have " + logam + " new admin logs.")
-                pyos_os_ad()
+                pyos_os_us()
             os.system("cls")
             print("##################################################")
             print("                      Py OS                       ")
@@ -2409,7 +2409,9 @@ PyOS 0.1.1.4 ----
   This means security is heightened massively. Even though the source code is open lol
 - Few tiny bug fixes I can't actually remember
 - Added an update page, kinda. Also backwards compatibilty is still there, surprisingly. That took some work.
-  
+
+PyOS 0.1.1.6 ----
+- Fixed a flaw with user logins on first time setup from PyOS <0.1.1.4 oops
 
 :)
 
