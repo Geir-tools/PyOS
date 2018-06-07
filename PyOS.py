@@ -1,4 +1,4 @@
-###.PyOS.0.1.1.2.### #
+###.PyOS.0.1.1.4.### #
 lisence = '''
 MIT License
 
@@ -119,18 +119,20 @@ global pyos_aun
 global pyos_permaun
 global pyver
 global code
+global password_write
 global pyos_tempadm
 global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.1.2") ##used as title
+pyos_ver = str("PyOS 0.1.1.4") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.1.2.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.1.4.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
+password_write = 'pyos_pass_write_to_file_encryption_key'
 print("[  OK  ] Done")
 if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
@@ -160,6 +162,173 @@ def pyos_exitscript():
     else:
         os.chdir("..")
         pyos_exitscript()
+def pyos_0114setup():
+    os.system("attrib -h -s prkey.bin")
+    os.system("attrib -h -s pukey.bin")
+    os.system("attrib -h -s data_pm.bin")
+    os.system("cls")
+    os.system("@mode con cols=50 lines=34")
+    print("##################################################")
+    print("")
+    print("                      Py OS                       ")
+    print("                     Account                      ")
+    print("                     Manager                      ")
+    print("")
+    print("")
+    print("###################################################")
+    print("Welcome to PyOS 0.1.1.4!")
+    print("Some security changes have been made,")
+    print("so the admin must re-enter their password.")
+    print("No accounts will be affected.")
+    passwordcheck = getpass.getpass("")
+    print("Please type your password again.")
+    passwordre = getpass.getpass("")
+    if passwordcheck == passwordre:
+        try:
+            with open('data_pm.bin', 'rb') as fobj:
+                private_key = RSA.import_key(
+                    open('prkey.bin').read(),
+                    passphrase=code)
+                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                            for x in (private_key.size_in_bytes(), 
+                                                            16, 16, -1) ]
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                session_key = cipher_rsa.decrypt(enc_session_key)
+                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        except:
+            print("Failed to decrypt password.")
+            print("Ensure the key is correct in the source code.")
+            os.system("pause")
+            pyos_0114setup()
+        datat = data.decode('ascii')
+        if datat == passwordcheck:
+            if len(passwordcheck) == 0:
+                print("Passwords can no longer be empty!")
+                print("Enter a new password...")
+                passwordcheck = getpass.getpass("")
+            key = RSA.generate(2048)
+            encrypted_key = key.exportKey(passphrase=passwordcheck, pkcs=8, 
+                    protection="scryptAndAES128-CBC")
+            with open('privkey.bin', 'wb') as f:
+                    f.write(encrypted_key)
+                    os.system("attrib +h privkey.bin")
+            with open('pubkey.bin', 'wb') as f:
+                    f.write(key.publickey().exportKey())
+                    os.system("attrib +h pubkey.bin")
+            with open('psdef.bin', 'wb') as out_file:
+                recipient_key = RSA.import_key(
+                    open('pubkey.bin').read())
+                session_key = get_random_bytes(16)
+                cipher_rsa = PKCS1_OAEP.new(recipient_key)
+                out_file.write(cipher_rsa.encrypt(session_key))
+                cipher_aes = AES.new(session_key, AES.MODE_EAX)
+                data = bytes(password_write, encoding='utf-8')
+                ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+                out_file.write(cipher_aes.nonce)
+                out_file.write(tag)
+                out_file.write(ciphertext)
+                os.system("attrib +h psdef.bin")
+            print("")
+            print("Update complete.")
+            print("Press any key to go to menu.")
+            os.system("pause >nul")
+            pyos_login()
+        else:
+            print("Incorrect password!")
+            print("Update cannot be completed without it.")
+            print("Please try again.")
+            os.system("pause >nul")
+            pyos_0114setup()
+    else:
+        print("Passwords do not match!")
+        os.system("pause >nul")
+        pyos_0114setup()
+def pyos_0114setupuser():
+    os.system("attrib -h -s prkey.bin")
+    os.system("attrib -h -s pukey.bin")
+    os.system("attrib -h -s data_pm.bin")
+    passwordcheck = getpass.getpass("")
+    if passwordcheck == passwordcheck:
+        try:
+            with open('data_pm.bin', 'rb') as fobj:
+                private_key = RSA.import_key(
+                    open('prkey.bin').read(),
+                    passphrase=code)
+                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                            for x in (private_key.size_in_bytes(), 
+                                                            16, 16, -1) ]
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                session_key = cipher_rsa.decrypt(enc_session_key)
+                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        except:
+            print("Failed to decrypt password.")
+            print("Ensure the key is correct in the source code.")
+            os.system("pause")
+            pyos_0114setup()
+        datat = data.decode('ascii')
+        if datat == passwordcheck:
+            if len(passwordcheck) == 0:
+                print("Passwords can no longer be empty!")
+                print("Enter a new password...")
+                passwordcheck = getpass.getpass("")
+            key = RSA.generate(2048)
+            encrypted_key = key.exportKey(passphrase=passwordcheck, pkcs=8, 
+                    protection="scryptAndAES128-CBC")
+            with open('privkey.bin', 'wb') as f:
+                    f.write(encrypted_key)
+                    os.system("attrib +h privkey.bin")
+            with open('pubkey.bin', 'wb') as f:
+                    f.write(key.publickey().exportKey())
+                    os.system("attrib +h pubkey.bin")
+            with open('psdef.bin', 'wb') as out_file:
+                recipient_key = RSA.import_key(
+                    open('pubkey.bin').read())
+                session_key = get_random_bytes(16)
+                cipher_rsa = PKCS1_OAEP.new(recipient_key)
+                out_file.write(cipher_rsa.encrypt(session_key))
+                cipher_aes = AES.new(session_key, AES.MODE_EAX)
+                data = bytes(password_write, encoding='utf-8')
+                ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+                out_file.write(cipher_aes.nonce)
+                out_file.write(tag)
+                out_file.write(ciphertext)
+                os.system("attrib +h psdef.bin")
+            print("")
+            print("Update complete.")
+            print("Press any key to continue.")
+            os.system("pause >nul")
+            if pyos_osn == pyos_aun:
+                os.system("cls")
+                print("##################################################")
+                print("                      Py OS                       ")
+                print("                       Sys                        ")
+                print("                      -ADM-                       ")
+                print("##################################################")
+                checkforlog = glob.glob("*.log")
+                if not len(checkforlog) == 0:
+                    logam = len(checkforlog)
+                    logam = str(logam)
+                    print("You have " + logam + " new admin logs.")
+                pyos_os_ad()
+            os.system("cls")
+            print("##################################################")
+            print("                      Py OS                       ")
+            print("                       Sys                        ")
+            print("                      -USR-                       ")
+            print("##################################################")
+            pyos_os_us()
+        else:
+            print("Incorrect password!")
+            print("Update cannot be completed without it.")
+            print("Please try again.")
+            os.system("pause >nul")
+            pyos_0114setupuser()
+    else:
+        print("Passwords do not match!")
+        os.system("pause >nul")
+        pyos_0114setupuser()
 def pyos_skeset():
     if os.path.exists("PyOS.py"):
         if os.path.exists("ske.dll"):
@@ -193,7 +362,7 @@ def pyos_boot():
     pyos_dr = os.getcwd()
     if "PyOS_Data" in pyos_dr:
         print("[  OS  ] Checking Files...")
-        if os.path.exists("data_pm.bin"):
+        if os.path.exists("data_pm.bin") or os.path.exists("psdef.bin"):
               print("[  OK  ] Assuming account exists")
               try:
                 global RSA
@@ -210,6 +379,8 @@ def pyos_boot():
                 print("[  OK  ] Random Import")
               except:
                 pyos_cryfail()
+              if not os.path.exists("psdef.bin"):
+                  pyos_0114setup()
               print("[  OK  ] Booting!")
               if os.path.exists("stp.dev"):
                   print("[  OK  ] STP enabled")
@@ -306,33 +477,31 @@ def pyos_accrecover():
     print("")
     print("###################################################")
     print("")
-    print("Enter a new password for your account...")
-    passwordcheck = getpass.getpass("")
-    print("Please type your password again.")
-    passwordre = getpass.getpass("")
+    passwordcheck = getpass.getpass("Enter New Pass: ")
+    passwordre = getpass.getpass("Retype New Pass: ")
     if passwordcheck == passwordre:
         key = RSA.generate(2048)
-        encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+        encrypted_key = key.exportKey(passphrase=passwordcheck, pkcs=8, 
                 protection="scryptAndAES128-CBC")
-        with open('prkey.bin', 'wb') as f:
+        with open('privkey.bin', 'wb') as f:
                 f.write(encrypted_key)
-                os.system("attrib +h prkey.bin")
-        with open('pukey.bin', 'wb') as f:
+                os.system("attrib +h privkey.bin")
+        with open('pubkey.bin', 'wb') as f:
                 f.write(key.publickey().exportKey())
-                os.system("attrib +h pukey.bin")
-        with open('data_pm.bin', 'wb') as out_file:
+                os.system("attrib +h pubkey.bin")
+        with open('psdef.bin', 'wb') as out_file:
             recipient_key = RSA.import_key(
-                open('pukey.bin').read())
+                open('pubkey.bin').read())
             session_key = get_random_bytes(16)
             cipher_rsa = PKCS1_OAEP.new(recipient_key)
             out_file.write(cipher_rsa.encrypt(session_key))
             cipher_aes = AES.new(session_key, AES.MODE_EAX)
-            data = bytes(passwordcheck, encoding='utf-8')
+            data = bytes(password_write, encoding='utf-8')
             ciphertext, tag = cipher_aes.encrypt_and_digest(data)
             out_file.write(cipher_aes.nonce)
             out_file.write(tag)
             out_file.write(ciphertext)
-            os.system("attrib +h data_pm.bin")
+            os.system("attrib +h psdef.bin")
         print("")
         print("Setup is complete!")
         print("Press any key to go to menu.")
@@ -341,7 +510,7 @@ def pyos_accrecover():
     else:
         print("Passwords do not match!")
         os.system("pause >nul")
-        pyos_setps()
+        pyos_accrecover()
 def pyos_login():
     os.system("cls")
     print("##################################################")
@@ -375,10 +544,10 @@ def pyos_login():
         print("Please enter your password, " + pyos_osn)
         enterpass = getpass.getpass("")
         try:
-            with open('data_pm.bin', 'rb') as fobj:
+            with open('psdef.bin', 'rb') as fobj:
                 private_key = RSA.import_key(
-                    open('prkey.bin').read(),
-                    passphrase=code)
+                    open('privkey.bin').read(),
+                    passphrase=enterpass)
                 enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
                                                             for x in (private_key.size_in_bytes(), 
                                                             16, 16, -1) ]
@@ -387,12 +556,12 @@ def pyos_login():
                 cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
                 data = cipher_aes.decrypt_and_verify(ciphertext, tag)
         except:
-            print("Failed to decrypt password.")
-            print("Ensure the key is correct in the source code.")
-            os.system("pause")
+            print("Failed to unlock account.")
+            print("Is your password correct?")
+            os.system("pause >nul")
             pyos_login()
         datat = data.decode('ascii')
-        if datat == enterpass:
+        if datat == password_write:
             if os.path.exists("dbm.bin"):
                 print("Your account has been disabled.")
                 print("Contact the admin (" + pyos_permaun + ") for help.")
@@ -422,7 +591,8 @@ def pyos_login():
             print("##################################################")
             pyos_os_us()
         else:
-            print("Incorrect Password!")
+            print("Failed to unlock account.")
+            print("Ensure password_write has not been changed.")
             fobj.close()
             os.system("pause >nul")
             pyos_login()
@@ -453,7 +623,13 @@ def pyos_login():
             os.system("pause >nul")
             os.chdir(pyos_osn)
             pyos_login()
-        if os.path.exists("data_pm.bin"):
+        if os.path.exists("psdef.bin") or os.path.exists("data_pm.bin"):
+            if not os.path.exists("psdef.bin"):
+                print("")
+                print("Welcome to PyOS 0.1.1.4!")
+                print("To finish preparing this update,")
+                print("Please enter your password again.")
+                pyos_0114setupuser()
             print("Switched to " + logswitch)
             global pyos_osn
             pyos_osn = (logswitch)
@@ -565,32 +741,34 @@ def pyos_set():
     print("Keystrokes will not be echoed.")
     pyos_setps()
 def pyos_setps():
-    passwordcheck = getpass.getpass("")
-    print("Please type your password again.")
-    passwordre = getpass.getpass("")
+    passwordcheck = getpass.getpass("Enter New pass: ")
+    passwordre = getpass.getpass("Retype New Pass: ")
     if passwordcheck == passwordre:
+        if len(passwordcheck) == 0:
+            print("Password cannot be 0 characters!")
+            pyos_setps()
         key = RSA.generate(2048)
-        encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+        encrypted_key = key.exportKey(passphrase=passwordcheck, pkcs=8, 
                 protection="scryptAndAES128-CBC")
-        with open('prkey.bin', 'wb') as f:
+        with open('privkey.bin', 'wb') as f:
                 f.write(encrypted_key)
-                os.system("attrib +h prkey.bin")
-        with open('pukey.bin', 'wb') as f:
+                os.system("attrib +h privkey.bin")
+        with open('pubkey.bin', 'wb') as f:
                 f.write(key.publickey().exportKey())
-                os.system("attrib +h pukey.bin")
-        with open('data_pm.bin', 'wb') as out_file:
+                os.system("attrib +h pubkey.bin")
+        with open('psdef.bin', 'wb') as out_file:
             recipient_key = RSA.import_key(
-                open('pukey.bin').read())
+                open('pubkey.bin').read())
             session_key = get_random_bytes(16)
             cipher_rsa = PKCS1_OAEP.new(recipient_key)
             out_file.write(cipher_rsa.encrypt(session_key))
             cipher_aes = AES.new(session_key, AES.MODE_EAX)
-            data = bytes(passwordcheck, encoding='utf-8')
+            data = bytes(password_write, encoding='utf-8')
             ciphertext, tag = cipher_aes.encrypt_and_digest(data)
             out_file.write(cipher_aes.nonce)
             out_file.write(tag)
             out_file.write(ciphertext)
-            os.system("attrib +h data_pm.bin")
+            os.system("attrib +h psdef.bin")
         print("")
         print("Setup is complete!")
         print("Press any key to go to menu.")
@@ -766,53 +944,60 @@ def pyos_os_us():
             pyos_os_ad()
         print("Enter your current password...")
         enterpass = getpass.getpass("")
-        with open('data_pm.bin', 'rb') as fobj:
-            private_key = RSA.import_key(
-                open('prkey.bin').read(),
-                passphrase=code)
-            enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
-                                                        for x in (private_key.size_in_bytes(), 
-                                                        16, 16, -1) ]
-            cipher_rsa = PKCS1_OAEP.new(private_key)
-            session_key = cipher_rsa.decrypt(enc_session_key)
-            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-            data = cipher_aes.decrypt_and_verify(ciphertext, tag)
-        datat = data.decode('ascii')
-        if not datat == enterpass:
+        if len(enterpass) == 0:
+            print("Password cannot be 0 characters!")
+        try:
+            with open('psdef.bin', 'rb') as fobj:
+                private_key = RSA.import_key(
+                    open('privkey.bin').read(),
+                    passphrase=enterpass)
+                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                            for x in (private_key.size_in_bytes(), 
+                                                            16, 16, -1) ]
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                session_key = cipher_rsa.decrypt(enc_session_key)
+                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+            datat = data.decode('ascii')
+        except:
+            print("Incorrect password!")
+            fobj.close()
+            pyos_os_ad()
+        if not datat == password_write:
             print("Incorrect password!")
             fobj.close()
             pyos_os_us()
         fobj.close()
-        os.remove("data_pm.bin")
-        os.remove("prkey.bin")
-        os.remove("pukey.bin")
+        os.remove("psdef.bin")
+        os.remove('privkey.bin')
+        os.remove('pubkey.bin')
         print("Enter a new password...")
         passwordcheck = getpass.getpass("")
         print("Please type your password again.")
         passwordre = getpass.getpass("")
         if passwordcheck == passwordre:
             key = RSA.generate(2048)
-            encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+            encrypted_key = key.exportKey(passphrase=passwordcheck, pkcs=8, 
                     protection="scryptAndAES128-CBC")
-            with open('prkey.bin', 'wb') as f:
+            with open('privkey.bin', 'wb') as f:
                     f.write(encrypted_key)
-                    os.system("attrib +h prkey.bin")
-            with open('pukey.bin', 'wb') as f:
+                    os.system("attrib +h privkey.bin")
+            with open('pubkey.bin', 'wb') as f:
                     f.write(key.publickey().exportKey())
-                    os.system("attrib +h pukey.bin")
-            with open('data_pm.bin', 'wb') as out_file:
+                    os.system("attrib +h pubkey.bin")
+            with open('psdef.bin', 'wb') as out_file:
                 recipient_key = RSA.import_key(
-                    open('pukey.bin').read())
+                    open('pubkey.bin').read())
                 session_key = get_random_bytes(16)
                 cipher_rsa = PKCS1_OAEP.new(recipient_key)
                 out_file.write(cipher_rsa.encrypt(session_key))
                 cipher_aes = AES.new(session_key, AES.MODE_EAX)
-                data = bytes(passwordcheck, encoding='utf-8')
+                data = bytes(password_write, encoding='utf-8')
                 ciphertext, tag = cipher_aes.encrypt_and_digest(data)
                 out_file.write(cipher_aes.nonce)
                 out_file.write(tag)
                 out_file.write(ciphertext)
-                os.system("attrib +h data_pm.bin")
+                os.system("attrib +h psdef.bin")
             print("")
             print("Password changed.")
             pyos_os_us()
@@ -846,6 +1031,8 @@ def pyos_os_us():
             trnus = str(trnu)
             if (".bin") in letter:
                 continue
+            if ("_enc") in letter:
+                continue
             if letter == "dbmnull.bin":
                 continue
             if letter == "dbm.bin":
@@ -871,19 +1058,38 @@ def pyos_os_us():
             os.chdir('..')
             os.chdir(pyos_aun)
             tryswitch = getpass.getpass("Enter admin (" + pyos_aun + ")'s password...")
-            with open('data_pm.bin', 'rb') as fobj:
-                private_key = RSA.import_key(
-                    open('prkey.bin').read(),
-                    passphrase=code)
-                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
-                                                            for x in (private_key.size_in_bytes(), 
-                                                            16, 16, -1) ]
-                cipher_rsa = PKCS1_OAEP.new(private_key)
-                session_key = cipher_rsa.decrypt(enc_session_key)
-                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
-            datat = data.decode('ascii')
-            if datat == tryswitch:
+            if len(tryswitch) == 0:
+                print("Password cannot be 0 characters!")
+                pyos_os_us()
+            try:
+                with open('psdef.bin', 'rb') as fobj:
+                    private_key = RSA.import_key(
+                        open('privkey.bin').read(),
+                        passphrase=tryswitch)
+                    enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                                for x in (private_key.size_in_bytes(), 
+                                                                16, 16, -1) ]
+                    cipher_rsa = PKCS1_OAEP.new(private_key)
+                    session_key = cipher_rsa.decrypt(enc_session_key)
+                    cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                    data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+                datat = data.decode('ascii')
+            except:
+                os.chdir('..')
+                os.chdir(pyos_aun)
+                timedate = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
+                timedateformat = timedate.replace(":", ".")
+                logfail = str("The user '" + pyos_osn + "' attempted accessing your account with the password '" + tryswitch + "' on/at '" + timedate + "'")
+                logname = str("failedlogin " + timedateformat + ".log")
+                with open(logname, 'w') as log:
+                    log.write(logfail)
+                    log.close()
+                print("Incorrect password!")
+                print(pyos_aun + " has been alerted.")
+                os.chdir('..')
+                os.chdir(pyos_osn)
+                pyos_os_us()
+            if datat == password_write:
                 os.chdir('..')
                 os.chdir(pyos_aun)
                 timedate = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
@@ -1507,53 +1713,60 @@ def pyos_os_ad():
             pyos_os_ad()
         print("Enter your current password...")
         enterpass = getpass.getpass("")
-        with open('data_pm.bin', 'rb') as fobj:
-            private_key = RSA.import_key(
-                open('prkey.bin').read(),
-                passphrase=code)
-            enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
-                                                        for x in (private_key.size_in_bytes(), 
-                                                        16, 16, -1) ]
-            cipher_rsa = PKCS1_OAEP.new(private_key)
-            session_key = cipher_rsa.decrypt(enc_session_key)
-            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-            data = cipher_aes.decrypt_and_verify(ciphertext, tag)
-        datat = data.decode('ascii')
-        if not datat == enterpass:
+        if len(enterpass) == 0:
+            print("Password cannot be 0 characters!")
+        try:
+            with open('psdef.bin', 'rb') as fobj:
+                private_key = RSA.import_key(
+                    open('privkey.bin').read(),
+                    passphrase=enterpass)
+                enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
+                                                            for x in (private_key.size_in_bytes(), 
+                                                            16, 16, -1) ]
+                cipher_rsa = PKCS1_OAEP.new(private_key)
+                session_key = cipher_rsa.decrypt(enc_session_key)
+                cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+                data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+            datat = data.decode('ascii')
+        except:
+            print("Incorrect password!")
+            fobj.close()
+            pyos_os_ad()
+        if not datat == password_write:
             print("Incorrect password!")
             fobj.close()
             pyos_os_ad()
         fobj.close()
-        os.remove("data_pm.bin")
-        os.remove("prkey.bin")
-        os.remove("pukey.bin")
+        os.remove("psdef.bin")
+        os.remove('privkey.bin')
+        os.remove('pubkey.bin')
         print("Enter a new password...")
         passwordcheck = getpass.getpass("")
         print("Please type your password again.")
         passwordre = getpass.getpass("")
         if passwordcheck == passwordre:
             key = RSA.generate(2048)
-            encrypted_key = key.exportKey(passphrase=code, pkcs=8, 
+            encrypted_key = key.exportKey(passphrase=passwordcheck, pkcs=8, 
                     protection="scryptAndAES128-CBC")
-            with open('prkey.bin', 'wb') as f:
+            with open('privkey.bin', 'wb') as f:
                     f.write(encrypted_key)
-                    os.system("attrib +h prkey.bin")
-            with open('pukey.bin', 'wb') as f:
+                    os.system("attrib +h privkey.bin")
+            with open('pubkey.bin', 'wb') as f:
                     f.write(key.publickey().exportKey())
-                    os.system("attrib +h pukey.bin")
-            with open('data_pm.bin', 'wb') as out_file:
+                    os.system("attrib +h pubkey.bin")
+            with open('psdef.bin', 'wb') as out_file:
                 recipient_key = RSA.import_key(
-                    open('pukey.bin').read())
+                    open('pubkey.bin').read())
                 session_key = get_random_bytes(16)
                 cipher_rsa = PKCS1_OAEP.new(recipient_key)
                 out_file.write(cipher_rsa.encrypt(session_key))
                 cipher_aes = AES.new(session_key, AES.MODE_EAX)
-                data = bytes(passwordcheck, encoding='utf-8')
+                data = bytes(password_write, encoding='utf-8')
                 ciphertext, tag = cipher_aes.encrypt_and_digest(data)
                 out_file.write(cipher_aes.nonce)
                 out_file.write(tag)
                 out_file.write(ciphertext)
-                os.system("attrib +h data_pm.bin")
+                os.system("attrib +h psdef.bin")
             print("")
             print("Password changed.")
             pyos_os_ad()
@@ -1656,15 +1869,15 @@ def pyos_os_ad():
                     key = RSA.generate(2048)
                     encrypted_key = key.exportKey(passphrase=passph, pkcs=8, 
                             protection="scryptAndAES128-CBC")
-                    with open('prkey.file.bin', 'wb') as f:
+                    with open('privkey.file.bin', 'wb') as f:
                             f.write(encrypted_key)
-                            os.system("attrib +h prkey.file.bin")
-                    with open('pukey.file.bin', 'wb') as f:
+                            os.system("attrib +h privkey.file.bin")
+                    with open('pubkey.file.bin', 'wb') as f:
                             f.write(key.publickey().exportKey())
-                            os.system("attrib +h pukey.file.bin")
+                            os.system("attrib +h pubkey.file.bin")
                     with open('data.file.bin', 'wb') as out_file:
                         recipient_key = RSA.import_key(
-                            open('pukey.file.bin').read())
+                            open('pubkey.file.bin').read())
                         session_key = get_random_bytes(16)
                         cipher_rsa = PKCS1_OAEP.new(recipient_key)
                         out_file.write(cipher_rsa.encrypt(session_key))
@@ -1707,7 +1920,7 @@ def pyos_os_ad():
             with open('data.file.bin', 'rb') as fobj:
                 try:
                     private_key = RSA.import_key(
-                        open('prkey.file.bin').read(),
+                        open('privkey.file.bin').read(),
                         passphrase=passph)
                     enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
                                                                 for x in (private_key.size_in_bytes(), 
@@ -1905,6 +2118,8 @@ def pyos_os_ad():
                 continue
             if (".log") in letter:
                 continue
+            if ("_enc") in letter:
+                continue
             print(letter)
         print("")
         print("Encrypted files found:")
@@ -2018,15 +2233,15 @@ def pyos_enc():
                 key = RSA.generate(2048)
                 encrypted_key = key.exportKey(passphrase=passph, pkcs=8, 
                         protection="scryptAndAES128-CBC")
-                with open('prkey.file.bin', 'wb') as f:
+                with open('privkey.file.bin', 'wb') as f:
                         f.write(encrypted_key)
-                        os.system("attrib +h prkey.file.bin")
-                with open('pukey.file.bin', 'wb') as f:
+                        os.system("attrib +h privkey.file.bin")
+                with open('pubkey.file.bin', 'wb') as f:
                         f.write(key.publickey().exportKey())
-                        os.system("attrib +h pukey.file.bin")
+                        os.system("attrib +h pubkey.file.bin")
                 with open('data.file.bin', 'wb') as out_file:
                     recipient_key = RSA.import_key(
-                        open('pukey.file.bin').read())
+                        open('pubkey.file.bin').read())
                     session_key = get_random_bytes(16)
                     cipher_rsa = PKCS1_OAEP.new(recipient_key)
                     out_file.write(cipher_rsa.encrypt(session_key))
@@ -2067,7 +2282,7 @@ def pyos_dnc():
         with open('data.file.bin', 'rb') as fobj:
             try:
                 private_key = RSA.import_key(
-                    open('prkey.file.bin').read(),
+                    open('privkey.file.bin').read(),
                     passphrase=passph)
                 enc_session_key, nonce, tag, ciphertext = [ fobj.read(x) 
                                                             for x in (private_key.size_in_bytes(), 
@@ -2140,7 +2355,7 @@ def pyos_cryfail():
         os.system("pause >nul")
         pyos_boot()
     if cryfail == ("3"):
-        ext()
+        exit()
     elif cryfail == ("1"):
         print("")
         print("PyOS will now boot w/o encryption services.")
@@ -2187,6 +2402,14 @@ PyOS 0.1.1.2 ----
 - Decryption "file not found" message changed
 - Added add, subtract, multiply and divide features.
 
+PyOS 0.1.1.4 ----
+- Completely changed how passwords work, now they work much more like enc and dnc, making them much more secure.
+  Now passwords aren't actually stored - password files are just a default value
+  and the password is the key to decrypt it. If it's wrong, the output is garbage.
+  This means security is heightened massively. Even though the source code is open lol
+- Few tiny bug fixes I can't actually remember
+- Added an update page, kinda. Also backwards compatibilty is still there, surprisingly. That took some work.
+  
 
 :)
 
