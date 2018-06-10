@@ -1,4 +1,4 @@
-###.PyOS.0.1.1.8.### #
+###.PyOS.0.1.1.8X.### #
 lisence = '''
 MIT License
 
@@ -126,11 +126,11 @@ global pyos_fallback
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.1.8") ##used as title
+pyos_ver = str("PyOS 0.1.1.8X") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.1.8.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.1.8X.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -186,6 +186,16 @@ def pyos_boot():
                 config_update = config[5]
         else:
             print("[  OK  ] Config not found")
+            global config_resize
+            global config_autologin
+            global config_devmode
+            global config_forceadmin
+            global config_update
+            config_resize = "Resize1"
+            config_autologin = "Autologin0"
+            config_devmode = "Devmode0"
+            config_forceadmin = "Forceadmin0"
+            config_update = "Update1"
         try:
             os.chdir(pyos_osn)
         except:
@@ -2549,6 +2559,9 @@ PyOS 0.1.1.8 ----
 - Allow for users to skip password checks, download developer updates, disable window resize, disable updates altogether and force admin for all users.
 - Fixed disable accounts
 - Fixed adm being allowed on first-time login from update to 0.1.1.4 for users
+
+PyOS 0.1.1.8X ----
+- HOTFIX CAUSE I'M AN IDIOT AND FORGOT TO MAKE SOME VARIABLES
 :)
 
 ''')
