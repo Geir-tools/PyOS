@@ -1,4 +1,4 @@
-###.PyOS.0.1.1.6.### #
+###.PyOS.0.1.1.8.### #
 lisence = '''
 MIT License
 
@@ -94,6 +94,7 @@ if not os.path.exists("ske.dll"):
         print("[  OS  ] If this was an error, Please report it on Github")
         print("[  OS  ] Include details of what you were doing, etc etc")
         print("[  OS  ] Boot will continue in 5 seconds")
+        print("[      ]")
         time.sleep(1)
         print("[      ]")
         time.sleep(1)
@@ -122,17 +123,17 @@ global code
 global password_write
 global pyos_tempadm
 global pyos_fallback
-pyos_fallback = False ##used to determine how the program runs
-code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. 
+pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
+code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.1.6") ##used as title
+pyos_ver = str("PyOS 0.1.1.8") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.1.6.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.1.8.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
-password_write = 'pyos_pass_write_to_file_encryption_key'
+password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
 print("[  OK  ] Done")
 if pyver > ("3.6"):
     print("You are using an unsupported version of Python!")
@@ -162,12 +163,114 @@ def pyos_exitscript():
     else:
         os.chdir("..")
         pyos_exitscript()
+def pyos_boot():
+    if os.path.exists("PyOS_Data"):
+        os.chdir("PyOS_Data")
+        if os.path.exists("config.bin"):
+            with open('config.bin', 'rb') as config_read:
+                config = config_read.read()
+                config = bytes(config)
+                config = config.decode('utf-8')
+                config = config.split('//')
+                for letter, number in enumerate(config):
+                    print("[  OK  ]", number) ##What's that? Streamlined coding? Never heard of it
+                global config_resize
+                global config_autologin
+                global config_devmode
+                global config_forceadmin
+                global config_update
+                config_resize = config[1]
+                config_autologin = config[2]
+                config_devmode = config[3]
+                config_forceadmin = config[4]
+                config_update = config[5]
+        else:
+            print("[  OK  ] Config not found")
+        try:
+            os.chdir(pyos_osn)
+        except:
+            pyos_set()
+    pyos_dr = os.getcwd()
+    if "PyOS_Data" in pyos_dr:
+        print("[  OS  ] Checking Files...")
+        if os.path.exists("data_pm.bin") or os.path.exists("psdef.bin"):
+              print("[  OK  ] Assuming account exists")
+              try:
+                global RSA
+                global AES
+                global get_random_bytes
+                global PKCSl_OAEP
+                from Cryptodome.PublicKey import RSA
+                print("[  OK  ] RSA Import")
+                from Cryptodome.Cipher import PKCS1_OAEP
+                print("[  OK  ] PKCSl_OAEP Import")
+                from Cryptodome.Cipher import AES
+                print("[  OK  ] AES Import")
+                from Cryptodome.Random import get_random_bytes
+                print("[  OK  ] Random Import")
+              except:
+                pyos_cryfail()
+              if not os.path.exists("psdef.bin"):
+                  pyos_0114setup()
+              print("[  OK  ] Booting!")
+              if os.path.exists("stp.dev"):
+                  print("[  OK  ] STP enabled")
+                  os.system("pause >nul")
+              if config_resize == "Resize1":
+                  os.system("@mode con cols=50 lines=34")
+              if config_autologin == "Autologin1":
+                  print("Auto login enabled.")
+                  print("Welcome, " + pyos_osn + ".")
+                  pyos_os_ad()
+              pyos_login()
+        else:
+            os.chdir('..')
+            try:
+                global RSA
+                global AES
+                global get_random_bytes
+                global PKCSl_OAEP
+                from Cryptodome.PublicKey import RSA
+                print("[  OK  ] RSA Import")
+                from Cryptodome.Cipher import PKCS1_OAEP
+                print("[  OK  ] PKCSl_OAEP Import")
+                from Cryptodome.Cipher import AES
+                print("[  OK  ] AES Import")
+                from Cryptodome.Random import get_random_bytes
+                print("[  OK  ] Random Import")
+            except:
+                pyos_cryfail()
+            pyos_set()
+    else:
+        os.mkdir("PyOS_Data")
+        os.chdir("PyOS_Data")
+        try:
+            global RSA
+            global AES
+            global get_random_bytes
+            global PKCS1_OAEP
+            from Cryptodome.PublicKey import RSA
+            print("[  OK  ] RSA Import")
+            from Cryptodome.Cipher import AES
+            print("[  OK  ] AES Import")
+            from Cryptodome.Cipher import PKCS1_OAEP
+            print("[  OK  ] PKCSl_OAEP Import")
+            from Cryptodome.Random import get_random_bytes
+            print("[  OK  ] Random Import")
+        except:
+            pyos_cryfail()
+        print("[  OK  ] Assuming setup is required")
+        print("[  OK  ] Booting!")
+        if config_resize == "Resize1":
+            os.system("@mode con cols=50 lines=34")
+        pyos_set()
 def pyos_0114setup():
     os.system("attrib -h -s prkey.bin")
     os.system("attrib -h -s pukey.bin")
     os.system("attrib -h -s data_pm.bin")
     os.system("cls")
-    os.system("@mode con cols=50 lines=34")
+    if config_resize == "Resize1":
+        os.system("@mode con cols=50 lines=34")
     print("##################################################")
     print("")
     print("                      Py OS                       ")
@@ -352,81 +455,6 @@ def pyos_skeset():
     else:
         os.chdir("..")
         pyos_skeset()
-def pyos_boot():
-    if os.path.exists("PyOS_Data"):
-        os.chdir("PyOS_Data")
-        try:
-            os.chdir(pyos_osn)
-        except:
-            pyos_set()
-    pyos_dr = os.getcwd()
-    if "PyOS_Data" in pyos_dr:
-        print("[  OS  ] Checking Files...")
-        if os.path.exists("data_pm.bin") or os.path.exists("psdef.bin"):
-              print("[  OK  ] Assuming account exists")
-              try:
-                global RSA
-                global AES
-                global get_random_bytes
-                global PKCSl_OAEP
-                from Cryptodome.PublicKey import RSA
-                print("[  OK  ] RSA Import")
-                from Cryptodome.Cipher import PKCS1_OAEP
-                print("[  OK  ] PKCSl_OAEP Import")
-                from Cryptodome.Cipher import AES
-                print("[  OK  ] AES Import")
-                from Cryptodome.Random import get_random_bytes
-                print("[  OK  ] Random Import")
-              except:
-                pyos_cryfail()
-              if not os.path.exists("psdef.bin"):
-                  pyos_0114setup()
-              print("[  OK  ] Booting!")
-              if os.path.exists("stp.dev"):
-                  print("[  OK  ] STP enabled")
-                  os.system("pause >nul")
-              os.system("@mode con cols=50 lines=34")
-              pyos_login()
-        else:
-            os.chdir('..')
-            try:
-                global RSA
-                global AES
-                global get_random_bytes
-                global PKCSl_OAEP
-                from Cryptodome.PublicKey import RSA
-                print("[  OK  ] RSA Import")
-                from Cryptodome.Cipher import PKCS1_OAEP
-                print("[  OK  ] PKCSl_OAEP Import")
-                from Cryptodome.Cipher import AES
-                print("[  OK  ] AES Import")
-                from Cryptodome.Random import get_random_bytes
-                print("[  OK  ] Random Import")
-            except:
-                pyos_cryfail()
-            pyos_set()
-    else:
-        os.mkdir("PyOS_Data")
-        os.chdir("PyOS_Data")
-        try:
-            global RSA
-            global AES
-            global get_random_bytes
-            global PKCS1_OAEP
-            from Cryptodome.PublicKey import RSA
-            print("[  OK  ] RSA Import")
-            from Cryptodome.Cipher import AES
-            print("[  OK  ] AES Import")
-            from Cryptodome.Cipher import PKCS1_OAEP
-            print("[  OK  ] PKCSl_OAEP Import")
-            from Cryptodome.Random import get_random_bytes
-            print("[  OK  ] Random Import")
-        except:
-            pyos_cryfail()
-        print("[  OK  ] Assuming setup is required")
-        print("[  OK  ] Booting!")
-        os.system("@mode con cols=50 lines=34")
-        pyos_set()
 def pyos_dsacc():
     os.chdir('..')
     dirs = os.listdir(os.getcwd())
@@ -449,13 +477,17 @@ def pyos_dsacc():
         os.chdir(pyos_osn)
         pyos_devconsole()
     if os.path.exists("dbm.bin"):
-        os.rename("dbm.bin", "dbmnull.bin")
+        if not os.path.exists("dbmnull.bin"):
+            os.rename("dbm.bin", "dbmnull.bin")
+        else:
+            os.system("attrib -h dbm.bin")
+            os.remove("dbm.bin")
         print("Enabled " + accdis)
         os.chdir('..')
         os.chdir(pyos_osn)
         pyos_devconsole()
-    if os.path.exists("null.bin"):
-        os.rename("null.bin", "dbm.bin")
+    if os.path.exists("dbmnull.bin"):
+        os.rename("dbmnull.bin", "dbm.bin")
         print("Disabled " + accdis)
         os.chdir('..')
         os.chdir(pyos_osn)
@@ -625,6 +657,8 @@ def pyos_login():
             pyos_login()
         if os.path.exists("psdef.bin") or os.path.exists("data_pm.bin"):
             if not os.path.exists("psdef.bin"):
+                global pyos_osn
+                pyos_osn = (logswitch)
                 print("")
                 print("Welcome to PyOS 0.1.1.4!")
                 print("To finish preparing this update,")
@@ -714,7 +748,8 @@ def pyos_set():
         os.chdir(pyos_osn)
         if not os.path.exists("appdata"):
             os.mkdir('appdata')
-    os.system("@mode con cols=50 lines=34")
+    if config_resize == "Resize1":
+        os.system("@mode con cols=50 lines=34")
     if pyos_fallback == True:
         print("##################################################")
         print("")
@@ -1050,6 +1085,10 @@ def pyos_os_us():
         print("")
         pyos_os_us()
     elif os_input == ("adm"):
+        if config_forceadmin == "Forceadmin1":
+            print("Force admin enabled.")
+            print("Switched to admin!")
+            pyos_os_ad()
         pyos_aun = getpass.getuser()
         if pyos_osn == pyos_aun:
             print("Switched to admin!")
@@ -1127,6 +1166,84 @@ def pyos_os_us():
     else:
         print(os_input + " - Bad Input")
         pyos_os_us()
+def pyos_config(): ##Hey user, if you're reading this, prepare for the worst piece of code you'll ever read
+    print("")
+    print("Reading config file...")
+    os.chdir('..')
+    if os.path.exists("config.bin"):
+        with open('config.bin', 'rb') as config_read:
+            config = config_read.read()
+            config = bytes(config)
+            config = config.decode('utf-8')
+            config = config.split('//')
+            for letter, number in enumerate(config):
+                print(number) ##I know it should be letter but that returns the numbers?? Probably just me putting letter, number in the wrong order oops
+        print("Enter change to be made...")
+        conf_input = input("")
+        if not "0" in conf_input:
+            if not "1" in conf_input:
+                print("Invalid Selection.")
+                os.chdir(pyos_osn)
+                pyos_os_ad()
+            pass
+        cf_temp = conf_input.split()
+        if not len(cf_temp) == 2:
+            print("No change.")
+            print("Ensure you use [config] [number]")
+            os.chdir(pyos_osn)
+            pyos_os_ad()
+        cf = conf_input.split(" ")
+        if cf[1] == "1":
+            cf_alt = "0"
+        if cf[1] == "0":
+            cf_alt = "1"
+        cf_raw = "".join(cf)
+        del cf[1]
+        cf.extend(cf_alt)
+        cf_altraw = "".join(cf)
+        if not cf_raw in config:
+            if not cf_altraw in config:
+                print("No change.")
+                os.chdir(pyos_osn)
+                pyos_os_ad()
+            cf_change = config.index(cf_altraw)
+            del config[cf_change]
+            config.insert(cf_change, cf_raw)
+            config_read.close()
+            config = "//".join(config)
+            time.sleep(1)
+            os.remove("config.bin")
+            time.sleep(1)
+            with open('config.bin', 'wb') as config_write:
+                config_write.write(bytes(config, "UTF-8"))
+                config_write.close()
+            print("Changed " + cf_altraw + " to " + cf_raw)
+            os.chdir(pyos_osn)
+            pyos_os_ad()
+        cf_change = config.index(cf_raw)
+        del config[cf_change]
+        config.insert(cf_change, cf_altraw)
+        config_read.close()
+        config = "//".join(config)
+        time.sleep(1)
+        os.remove("config.bin")
+        time.sleep(1)
+        with open('config.bin', 'wb') as config_write:
+            config_write.write(bytes(config, "UTF-8"))
+            config_write.close()
+        print("Changed " + cf_raw + " to " + cf_altraw)
+        os.chdir(pyos_osn)
+        pyos_os_ad()
+        os.system("pause")
+    else:
+        print("Writing Defaults...")
+        configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin0//Update1'
+        with open('config.bin', 'wb') as config_write:
+            config_write.write(bytes(configbytes, "UTF-8"))
+            config_write.close()
+        time.sleep(1)
+        os.chdir(pyos_osn)
+        pyos_config()
 def pyos_update():
     if os.path.exists("UpdateClient.py"):
         os.startfile("UpdateClient.py")
@@ -1370,8 +1487,17 @@ def pyos_os_ad():
         print("crb - Create Backup")
         print("vdc - Voice dictation")
         print("adm - Admin tools")
+        print("set - PyOS Settings")
         print("crd - Credits")
         pyos_os_ad()
+    if os_input == ("set"):
+        if not pyos_osn == pyos_permaun:
+            print("Access denied.")
+            pyos_os_ad()
+        print("Caution!")
+        print("Changing these settings may cause security flaws.")
+        print("Use at your own risk.")
+        pyos_config()
     if os_input == ("adm"):
         if not pyos_osn == pyos_permaun:
             print("Access denied.")
@@ -1681,6 +1807,9 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_os_ad()        
     elif os_input == ("upd"):
+        if config_update == "Update0":
+            print("Updates have been disabled.")
+            pyos_os_ad()
         print("Checking for update...")
         if pyos_upd_cc == False:
             print("No update required")
@@ -2199,7 +2328,8 @@ def pyos_adm_cmd():
     pyos_cmd_dr = os.getcwd()
     pyos_cmd_in = input(pyos_cmd_dr + ">")
     if pyos_cmd_in == ("return"):
-        os.system("@mode con cols=50 lines=34")
+        if config_resize == "Resize1":
+            os.system("@mode con cols=50 lines=34")
         pyos_os_ad()
     else:
         try:
@@ -2327,7 +2457,8 @@ def pyos_func():
     os.system("pause")
 def pyos_cryfail():
     os.system("cls")
-    os.system("@mode con cols=50 lines=34")
+    if config_resize == "Resize1":
+        os.system("@mode con cols=50 lines=34")
     print("##################################################")
     print("")
     print("Failed Import!")
@@ -2413,6 +2544,11 @@ PyOS 0.1.1.4 ----
 PyOS 0.1.1.6 ----
 - Fixed a flaw with user logins on first time setup from PyOS <0.1.1.4 oops
 
+PyOS 0.1.1.8 ----
+- Added a configuration file, where things can be changed program-wide. Used to do this with files being made, now theres an actual file for it.
+- Allow for users to skip password checks, download developer updates, disable window resize, disable updates altogether and force admin for all users.
+- Fixed disable accounts
+- Fixed adm being allowed on first-time login from update to 0.1.1.4 for users
 :)
 
 ''')
