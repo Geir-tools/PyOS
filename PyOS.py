@@ -1,4 +1,13 @@
-###.PyOS.0.1.1.8X.### #
+###.PyOS.0.1.2.0.### #
+# TO DO LIST
+#
+# Fix no internet crash                          x
+#   
+# 
+#
+#
+#
+#
 lisence = '''
 MIT License
 
@@ -123,14 +132,35 @@ global code
 global password_write
 global pyos_tempadm
 global pyos_fallback
+global connection
+global config_resize
+global config_autologin
+global config_devmode
+global config_forceadmin
+global config_update
+config_resize = "Resize1"
+config_autologin = "Autologin0"
+config_devmode = "Devmode0"
+config_forceadmin = "Forceadmin0"
+config_update = "Update1"
+try:
+    update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/master/PyOS.py')
+    response = urllib.request.urlopen(update)
+    newcode = response.read()
+    master = newcode.decode()
+    print("[  OK  ] Connection Established")
+    connection = True
+except:
+    print("[  OK  ] No connection, updates disabled")
+    connection = False
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.1.8X") ##used as title
+pyos_ver = str("PyOS 0.1.2.0") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.1.8X.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.0.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -174,11 +204,6 @@ def pyos_boot():
                 config = config.split('//')
                 for letter, number in enumerate(config):
                     print("[  OK  ]", number) ##What's that? Streamlined coding? Never heard of it
-                global config_resize
-                global config_autologin
-                global config_devmode
-                global config_forceadmin
-                global config_update
                 config_resize = config[1]
                 config_autologin = config[2]
                 config_devmode = config[3]
@@ -186,16 +211,6 @@ def pyos_boot():
                 config_update = config[5]
         else:
             print("[  OK  ] Config not found")
-            global config_resize
-            global config_autologin
-            global config_devmode
-            global config_forceadmin
-            global config_update
-            config_resize = "Resize1"
-            config_autologin = "Autologin0"
-            config_devmode = "Devmode0"
-            config_forceadmin = "Forceadmin0"
-            config_update = "Update1"
         try:
             os.chdir(pyos_osn)
         except:
@@ -555,6 +570,12 @@ def pyos_accrecover():
         pyos_accrecover()
 def pyos_login():
     os.system("cls")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("")
     print("                      Py OS                       ")
@@ -563,18 +584,19 @@ def pyos_login():
     print("")
     print("")
     print("##################################################")
-    update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/master/PyOS.py')
-    response = urllib.request.urlopen(update)
-    newcode = response.read()
-    master = newcode.decode()
-    tvers = master.split(" ")
-    for number, line in enumerate(tvers):
-        tms = str(line)
-        break
-    if not tms == pyos_iden_ver:
-        print("An update is available.")
-        global pyos_upd_cc
-        pyos_upd_cc = True
+    if connection == True:
+        update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/master/PyOS.py')
+        response = urllib.request.urlopen(update)
+        newcode = response.read()
+        master = newcode.decode()
+        tvers = master.split(" ")
+        for number, line in enumerate(tvers):
+            tms = str(line)
+            break
+        if not tms == pyos_iden_ver:
+            print("An update is available.")
+            global pyos_upd_cc
+            pyos_upd_cc = True
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
     print("3} Create new user")
@@ -614,6 +636,12 @@ def pyos_login():
             os.system("pause >nul")
             if pyos_osn == pyos_aun:
                 os.system("cls")
+                if connection == True:
+                    timedate = time.strftime('%H:%M', time.gmtime())
+                    print("Connected                                    " + timedate)
+                else:
+                    timedate = time.strftime('%H:%M', time.gmtime())
+                    print("Not Connected                                " + timedate)
                 print("##################################################")
                 print("                      Py OS                       ")
                 print("                       Sys                        ")
@@ -626,6 +654,12 @@ def pyos_login():
                     print("You have " + logam + " new admin logs.")
                 pyos_os_ad()
             os.system("cls")
+            if connection == True:
+                timedate = time.strftime('%H:%M', time.gmtime())
+                print("Connected                                    " + timedate)
+            else:
+                timedate = time.strftime('%H:%M', time.gmtime())
+                print("Not Connected                                " + timedate)
             print("##################################################")
             print("                      Py OS                       ")
             print("                       Sys                        ")
@@ -734,6 +768,12 @@ def pyos_fallbacklogin():
             os.mkdir("fallback")
             os.chdir("fallback")
     os.system("cls")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("                      Py OS                       ")
     print("                       Sys                        ")
@@ -761,6 +801,12 @@ def pyos_set():
     if config_resize == "Resize1":
         os.system("@mode con cols=50 lines=34")
     if pyos_fallback == True:
+        if connection == True:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Connected                                    " + timedate)
+        else:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Not Connected                                " + timedate)
         print("##################################################")
         print("")
         print("                     WELCOME                      ")
@@ -770,6 +816,12 @@ def pyos_set():
         print("                     M o d e                      ")
         print("##################################################")
     else:
+        if connection == True:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Connected                                    " + timedate)
+        else:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Not Connected                                " + timedate)
         print("##################################################")
         print("")
         print("                     WELCOME                      ")
@@ -836,6 +888,12 @@ def pyos_setpsf():
     pyos_login() 
 def pyos_prog():
     os.system("cls")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("PyOS Apps")
     if not os.path.exists("appdata"):
@@ -931,9 +989,30 @@ def pyos_os_us():
         print("typ - Word Processor")
         print("rdf - Read Files")
         print("lsf - List Files")
+        print("ret - Return program / system info")
+        print(" ~use ret [info]")
+        print(" ~E.g, time, ver, date, etc")
         print("adm - Switch To Administrator")
         print("crd - Credits")
         pyos_os_us()
+    if "ret" in os_input:
+        osin = os_input.split(" ")
+        if not len(osin) == 2:
+            print("Usage: ret [info]")
+            pyos_os_us()
+        lookup = osin[1]
+        if lookup == "time":
+            print(time.strftime('%H:%M:%S', time.gmtime()))
+            pyos_os_us()
+        if lookup == "date":
+            print(time.strftime('%m-%d-%Y', time.gmtime()))
+            pyos_os_us()
+        if lookup == "ver":
+            print(pyos_ver + " Running on Python " + pyver)
+            pyos_os_us()
+        else:
+            print("Unrecognized lookup")
+            pyos_os_us()
     if os_input == ("crd"):
         print(credit)
         pyos_os_us()
@@ -954,6 +1033,12 @@ def pyos_os_us():
         pyos_prog()
     elif os_input == ("cls"):
         os.system("cls")
+        if connection == True:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Connected                                    " + timedate)
+        else:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Not Connected                                " + timedate)
         print("##################################################")
         print("                      Py OS                       ")
         print("                       Sys                        ")
@@ -1157,7 +1242,6 @@ def pyos_os_us():
                 fobj.close()
                 print("Temporary access granted.")
                 print(pyos_tempaun + " has been alerted.")
-                os.system("pause >nul")
                 pyos_os_ad()
             os.chdir('..')
             os.chdir(pyos_aun)
@@ -1181,6 +1265,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
     print("Reading config file...")
     os.chdir('..')
     if os.path.exists("config.bin"):
+        os.system("attrib -s -h config.bin")
         with open('config.bin', 'rb') as config_read:
             config = config_read.read()
             config = bytes(config)
@@ -1193,6 +1278,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         if not "0" in conf_input:
             if not "1" in conf_input:
                 print("Invalid Selection.")
+                os.system("attrib +s +h config.bin")
                 os.chdir(pyos_osn)
                 pyos_os_ad()
             pass
@@ -1200,6 +1286,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         if not len(cf_temp) == 2:
             print("No change.")
             print("Ensure you use [config] [number]")
+            os.system("attrib +s +h config.bin")
             os.chdir(pyos_osn)
             pyos_os_ad()
         cf = conf_input.split(" ")
@@ -1214,6 +1301,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         if not cf_raw in config:
             if not cf_altraw in config:
                 print("No change.")
+                os.system("attrib +s +h config.bin")
                 os.chdir(pyos_osn)
                 pyos_os_ad()
             cf_change = config.index(cf_altraw)
@@ -1228,6 +1316,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
                 config_write.write(bytes(config, "UTF-8"))
                 config_write.close()
             print("Changed " + cf_altraw + " to " + cf_raw)
+            os.system("attrib +s +h config.bin")
             os.chdir(pyos_osn)
             pyos_os_ad()
         cf_change = config.index(cf_raw)
@@ -1242,6 +1331,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
             config_write.write(bytes(config, "UTF-8"))
             config_write.close()
         print("Changed " + cf_raw + " to " + cf_altraw)
+        os.system("attrib +s +h config.bin")
         os.chdir(pyos_osn)
         pyos_os_ad()
         os.system("pause")
@@ -1251,6 +1341,7 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         with open('config.bin', 'wb') as config_write:
             config_write.write(bytes(configbytes, "UTF-8"))
             config_write.close()
+        os.system("attrib +s +h config.bin")
         time.sleep(1)
         os.chdir(pyos_osn)
         pyos_config()
@@ -1378,6 +1469,12 @@ def pyos_vdc():
         pyos_os_ad()
     print("Done!")
     os.system("cls")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("Welcome to PyOS Voice Dictation.")
     print("1} Use in live mode")
@@ -1496,10 +1593,31 @@ def pyos_os_ad():
         print("rib - Reinstall PyOS backup")
         print("crb - Create Backup")
         print("vdc - Voice dictation")
+        print("ret - Return program / system info")
+        print(" ~use ret [info]")
+        print(" ~E.g, time, ver, date")
         print("adm - Admin tools")
         print("set - PyOS Settings")
         print("crd - Credits")
         pyos_os_ad()
+    if "ret" in os_input:
+        osin = os_input.split(" ")
+        if not len(osin) == 2:
+            print("Usage: ret [info]")
+            pyos_os_ad()
+        lookup = osin[1]
+        if lookup == "time":
+            print(time.strftime('%H:%M:%S', time.gmtime()))
+            pyos_os_ad()
+        if lookup == "date":
+            print(time.strftime('%m-%d-%Y', time.gmtime()))
+            pyos_os_ad()
+        if lookup == "ver":
+            print(pyos_ver + "\nRunning on " + platform.platform() + "\nwith Python " + pyver)
+            pyos_os_ad()
+        else:
+            print("Unrecognized lookup")
+            pyos_os_ad()
     if os_input == ("set"):
         if not pyos_osn == pyos_permaun:
             print("Access denied.")
@@ -1817,6 +1935,10 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_os_ad()        
     elif os_input == ("upd"):
+        if connection == False:
+          print("You're offline!")
+          print("Restart to try and establish a connection.")
+          pyos_os_ad()
         if config_update == "Update0":
             print("Updates have been disabled.")
             pyos_os_ad()
@@ -1960,6 +2082,12 @@ def pyos_os_ad():
         pyos_os_ad()
     elif os_input == ("cls"):
         os.system("cls")
+        if connection == True:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Connected                                    " + timedate)
+        else:
+            timedate = time.strftime('%H:%M', time.gmtime())
+            print("Not Connected                                " + timedate)
         print("##################################################")
         print("                      Py OS                       ")
         print("                       Sys                        ")
@@ -2178,6 +2306,10 @@ def pyos_os_ad():
         print("Type 'return' to go back to PyOS.")
         pyos_adm_cmd()
     elif os_input == ("ist"):
+        if connection == False:
+          print("You're offline!")
+          print("Restart to try and establish a connection.")
+          pyos_os_ad()
         print("Enter name of app to download (Do not include filetypes).")
         appinst = input("")
         appinst = (appinst + ".py")
@@ -2350,6 +2482,12 @@ def pyos_adm_cmd():
             pyos_adm_cmd()
 def pyos_enc():
     os.system("cls")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("Enter file name (Do not include filetype).")
     pyos_enc_file = input("")
@@ -2411,6 +2549,12 @@ def pyos_enc():
             pyos_os_us()
 def pyos_dnc():
     os.system("cls")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("Enter file name (Do not include filetype).")
     pyos_dnc_file = input("")
@@ -2469,6 +2613,12 @@ def pyos_cryfail():
     os.system("cls")
     if config_resize == "Resize1":
         os.system("@mode con cols=50 lines=34")
+    if connection == True:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Connected                                    " + timedate)
+    else:
+        timedate = time.strftime('%H:%M', time.gmtime())
+        print("Not Connected                                " + timedate)
     print("##################################################")
     print("")
     print("Failed Import!")
@@ -2562,6 +2712,13 @@ PyOS 0.1.1.8 ----
 
 PyOS 0.1.1.8X ----
 - HOTFIX CAUSE I'M AN IDIOT AND FORGOT TO MAKE SOME VARIABLES
+
+PyOS 0.1.2.0 ----
+- lol welcome to 100kb
+- Added a semi-permanent status bar that never updates unless you cls or go somewhere else in the program
+- Fixed crash when not connected to internet
+- Added system info command (rtn)
+
 :)
 
 ''')
