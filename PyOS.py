@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.0.### #
+###.PyOS.0.1.2.2.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -135,6 +135,7 @@ global pyos_fallback
 global connection
 global config_resize
 global config_autologin
+global configbytes
 global config_devmode
 global config_forceadmin
 global config_update
@@ -143,6 +144,7 @@ config_autologin = "Autologin0"
 config_devmode = "Devmode0"
 config_forceadmin = "Forceadmin0"
 config_update = "Update1"
+config_acccreate = "AccountCreation1"
 try:
     update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/master/PyOS.py')
     response = urllib.request.urlopen(update)
@@ -153,14 +155,15 @@ try:
 except:
     print("[  OK  ] No connection, updates disabled")
     connection = False
+configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0//AccountCreation1//PauseStart0' ##Used for config file
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.0") ##used as title
+pyos_ver = str("PyOS 0.1.2.2") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.0.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.2.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -183,6 +186,8 @@ if os.path.exists("UpdateClient.py"):
     os.remove("UpdateClient.py")
 if os.path.exists("UpdateClientBK.py"):
     os.remove("UpdateClientBK.py")
+if os.path.exists("update.pyd"):
+    os.remove("update.pyd")
 def pyos_exitscript():
     if os.path.exists("PyOS.py"):
         try:
@@ -203,12 +208,38 @@ def pyos_boot():
                 config = config.decode('utf-8')
                 config = config.split('//')
                 for letter, number in enumerate(config):
-                    print("[  OK  ]", number) ##What's that? Streamlined coding? Never heard of it
-                config_resize = config[1]
-                config_autologin = config[2]
-                config_devmode = config[3]
-                config_forceadmin = config[4]
-                config_update = config[5]
+                    print("[  OK  ]", number) ##What's that? Streamlined coding? Never heard of it ##Sidenote, it got worse
+                global config_resize
+                global config_autologin
+                global config_devmode
+                global config_forceadmin
+                global config_update
+                global config_acccreate
+                global config_pausestart
+                try:
+                    config_resize = config[1]
+                    config_autologin = config[2]
+                    config_devmode = config[3]
+                    config_forceadmin = config[4]
+                    config_update = config[5]
+                    config_acccreate = config[6]
+                    config_pausestart = config[7]
+                except:
+                    config_read.close()
+                    print("[  OK  ] Failed to assign config variables")
+                    print("[  OK  ] Rewriting defaults")
+                    os.system("attrib -s -h config.bin")
+                    os.remove('config.bin')
+                    with open('config.bin', 'wb') as config_write:
+                        config_write.write(bytes(configbytes, "UTF-8"))
+                        config_write.close()
+                    os.system("attrib +s +h config.bin")
+                    time.sleep(1)
+                    print("[  OK  ] Reset")
+                    print("[  OK  ] Retrying...")
+                    time.sleep(1)
+                    os.chdir('..')
+                    pyos_boot()
         else:
             print("[  OK  ] Config not found")
         try:
@@ -239,7 +270,11 @@ def pyos_boot():
                   pyos_0114setup()
               print("[  OK  ] Booting!")
               if os.path.exists("stp.dev"):
-                  print("[  OK  ] STP enabled")
+                  os.remove("stp.dev")
+              if os.path.exists("stp.null"):
+                    os.remove("stp.null")
+              if config_pausestart == "PauseStart1":
+                  print("[  OK  ] Start pause enabled")
                   os.system("pause >nul")
               if config_resize == "Resize1":
                   os.system("@mode con cols=50 lines=34")
@@ -599,8 +634,11 @@ def pyos_login():
             pyos_upd_cc = True
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
-    print("3} Create new user")
-    print("4} Exit")
+    if config_acccreate == "AccountCreation0":
+        print("3} Exit")
+    else:
+        print("3} Create new user")
+        print("4} Exit")
     pyos_login_c = input("")
     if pyos_login_c == ("1"):
         if pyos_fallback == True:
@@ -727,6 +765,8 @@ def pyos_login():
             os.system("pause >nul")
             pyos_login()
     elif pyos_login_c == ("3"):
+        if config_acccreate == "AccountCreation0":
+            pyos_exitscript()
         if pyos_fallback == True:
             print("Disabled in fallback mode")
             os.system("pause >nul")
@@ -743,6 +783,8 @@ def pyos_login():
         pyos_osn = (newusern)
         pyos_set()
     elif pyos_login_c == ("4"):
+        if config_acccreate == "AccountCreation0":
+            pyos_login()
         pyos_exitscript()
     elif pyos_login_c == ("cd"):
         pyos_tempcd = os.getcwd()
@@ -1337,7 +1379,6 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         os.system("pause")
     else:
         print("Writing Defaults...")
-        configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin0//Update1'
         with open('config.bin', 'wb') as config_write:
             config_write.write(bytes(configbytes, "UTF-8"))
             config_write.close()
@@ -1406,25 +1447,11 @@ def pyos_devconsole():
     pyos_dev = input("$>> ")
     if pyos_dev == ("help"):
         print("help - Display this menu")
-        print("stp - Pause startup before screen clear")
         print("ske - Skip boot error check")
         print("dsb - Disable user accounts")
         print("acu - Access user account")
         print("mod - Install mod pkg (not implemented)")
         print("ext - Exit dev mode")
-    if pyos_dev == ("stp"):
-        if os.path.exists("stp.dev"):
-            os.rename("stp.dev", "stp.null")
-            print("Disabled stp.")
-            pyos_devconsole()
-        if os.path.exists("stp.null"):
-            os.rename("stp.null", "stp.dev")
-            print("Enabled stp.")
-            pyos_devconsole()
-        else:
-            os.system("echo PyOS >> stp.dev")
-            print("Enabled stp.")
-            pyos_devconsole()
     if pyos_dev == ("ske"):
         pyos_skeset()
     if pyos_dev == ("dsb"):
@@ -1434,6 +1461,7 @@ def pyos_devconsole():
     if pyos_dev == ("ext"):
         pyos_os_ad()
     else:
+        print("null")
         pyos_devconsole()
 def pyos_accessuser():
     os.chdir('..')
@@ -1598,6 +1626,8 @@ def pyos_os_ad():
         print(" ~E.g, time, ver, date")
         print("adm - Admin tools")
         print("set - PyOS Settings")
+        print(" ~~Use 'set d' to reset config file")
+        print(" ~~Recommended after updates!")
         print("crd - Credits")
         pyos_os_ad()
     if "ret" in os_input:
@@ -1626,6 +1656,22 @@ def pyos_os_ad():
         print("Changing these settings may cause security flaws.")
         print("Use at your own risk.")
         pyos_config()
+    if os_input == ("set d"):
+        if not pyos_osn == pyos_permaun:
+            print("Access denied.")
+            pyos_os_ad()
+        print("Resetting...")
+        os.chdir('..')
+        os.system("attrib -s -h config.bin")
+        os.remove('config.bin')
+        with open('config.bin', 'wb') as config_write:
+            config_write.write(bytes(configbytes, "UTF-8"))
+            config_write.close()
+        os.system("attrib +s +h config.bin")
+        time.sleep(1)
+        os.chdir(pyos_osn)
+        print("Reset.")
+        pyos_os_ad()
     if os_input == ("adm"):
         if not pyos_osn == pyos_permaun:
             print("Access denied.")
@@ -1963,6 +2009,9 @@ def pyos_os_ad():
             os.remove(pyos_iden_ver_file)
             pyos_update()
     elif os_input == ("upd a"):
+        if config_update == "Update0":
+            print("Updates have been disabled.")
+            pyos_os_ad()
         print("Forcing update...")
         os.chdir('..')
         os.chdir('..')
@@ -2717,8 +2766,12 @@ PyOS 0.1.2.0 ----
 - lol welcome to 100kb
 - Added a semi-permanent status bar that never updates unless you cls or go somewhere else in the program
 - Fixed crash when not connected to internet
-- Added system info command (rtn)
+- Added system info command (ret)
 
+PyOS 0.1.2.2 ----
+- Fixed the config system cause I'm an idiot and basically made the whole thing redundant
+- Added some more config file features, now that it works
+- Moved STP to config file
 :)
 
 ''')
