@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.2.### #
+###.PyOS.0.1.2.4.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -159,11 +159,11 @@ configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0/
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.2") ##used as title
+pyos_ver = str("PyOS 0.1.2.4") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.2.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.4.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -188,6 +188,8 @@ if os.path.exists("UpdateClientBK.py"):
     os.remove("UpdateClientBK.py")
 if os.path.exists("update.pyd"):
     os.remove("update.pyd")
+if os.path.exists("UpdateClientDev.py"):
+    os.remove("UpdateClientDev.py")
 def pyos_exitscript():
     if os.path.exists("PyOS.py"):
         try:
@@ -625,13 +627,27 @@ def pyos_login():
         newcode = response.read()
         master = newcode.decode()
         tvers = master.split(" ")
+        updatedev = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/developer/PyOSDEV.py')
+        responsedev = urllib.request.urlopen(updatedev)
+        newcodedev = responsedev.read()
+        masterdev = newcodedev.decode()
+        tversdev = masterdev.split(" ")
         for number, line in enumerate(tvers):
             tms = str(line)
             break
-        if not tms == pyos_iden_ver:
-            print("An update is available.")
-            global pyos_upd_cc
-            pyos_upd_cc = True
+        for number, line in enumerate(tversdev):
+            tmsdev = str(line)
+            break
+        if not tmsdev == pyos_iden_ver:
+            if config_devmode == "Devmode1":
+                print("A developer update is available.")
+                global pyos_upd_cc
+                pyos_upd_cc = True
+        if config_devmode == "Devmode0":
+            if not tms == pyos_iden_ver:
+                print("An update is available.")
+                global pyos_upd_cc
+                pyos_upd_cc = True
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
     if config_acccreate == "AccountCreation0":
@@ -1306,6 +1322,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
     print("")
     print("Reading config file...")
     os.chdir('..')
+    if pyos_fallback == True:
+        os.chdir('..')
     if os.path.exists("config.bin"):
         os.system("attrib -s -h config.bin")
         with open('config.bin', 'rb') as config_read:
@@ -1322,6 +1340,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
                 print("Invalid Selection.")
                 os.system("attrib +s +h config.bin")
                 os.chdir(pyos_osn)
+                if pyos_fallback == True:
+                    os.chdir('fallback')
                 pyos_os_ad()
             pass
         cf_temp = conf_input.split()
@@ -1330,6 +1350,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
             print("Ensure you use [config] [number]")
             os.system("attrib +s +h config.bin")
             os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
         cf = conf_input.split(" ")
         if cf[1] == "1":
@@ -1345,6 +1367,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
                 print("No change.")
                 os.system("attrib +s +h config.bin")
                 os.chdir(pyos_osn)
+                if pyos_fallback == True:
+                    os.chdir('fallback')
                 pyos_os_ad()
             cf_change = config.index(cf_altraw)
             del config[cf_change]
@@ -1360,6 +1384,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
             print("Changed " + cf_altraw + " to " + cf_raw)
             os.system("attrib +s +h config.bin")
             os.chdir(pyos_osn)
+            if pyos_fallback == True:
+                os.chdir('fallback')
             pyos_os_ad()
         cf_change = config.index(cf_raw)
         del config[cf_change]
@@ -1375,6 +1401,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         print("Changed " + cf_raw + " to " + cf_altraw)
         os.system("attrib +s +h config.bin")
         os.chdir(pyos_osn)
+        if pyos_fallback == True:
+            os.chdir('fallback')
         pyos_os_ad()
         os.system("pause")
     else:
@@ -1385,6 +1413,8 @@ def pyos_config(): ##Hey user, if you're reading this, prepare for the worst pie
         os.system("attrib +s +h config.bin")
         time.sleep(1)
         os.chdir(pyos_osn)
+        if pyos_fallback == True:
+            os.chdir('fallback')
         pyos_config()
 def pyos_update():
     if os.path.exists("UpdateClient.py"):
@@ -1417,6 +1447,38 @@ def pyos_update():
         os.system("echo os.startfile('PyOS.py') >> UpdateClient.py")
         os.system("echo exit() >> UpdateClient.py")
         os.startfile("UpdateClient.py")
+        pyos_exitscript()
+def pyos_update_dev():
+    if os.path.exists("UpdateClientDev.py"):
+        os.startfile("UpdateClientDev.py")
+        pyos_exitscript()
+    else:
+        os.system("echo import time >> UpdateClientDev.py")
+        os.system("echo import os >> UpdateClientDev.py")
+        os.system("echo import urllib.request >> UpdateClientDev.py")
+        os.system("echo os.system('title PyOS Updater') >> UpdateClientDev.py")
+        os.system("echo print('Collecting update from github...') >> UpdateClientDev.py")
+        os.system("echo update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/developer/PyOSDEV.py') >> UpdateClientDev.py")
+        os.system("echo response = urllib.request.urlopen(update) >> UpdateClientDev.py")
+        os.system("echo newcode = response.read() >> UpdateClientDev.py")
+        os.system("echo master = newcode.decode() >> UpdateClientDev.py")
+        os.system("echo with open('update.pyd', 'w') as u: >> UpdateClientDev.py")
+        os.system("echo     u.write(master) >> UpdateClientDev.py")
+        os.system("echo     u.close >> UpdateClientDev.py")
+        os.system("echo print('Updating...') >> UpdateClientDev.py")
+        os.system("echo time.sleep(2) >> UpdateClientDev.py")
+        os.system("echo os.remove('PyOS.py') >> UpdateClientDev.py")
+        os.system("echo with open('update.pyd', 'r') as u: >> UpdateClientDev.py")
+        os.system("echo    with open('PyOS.py', 'w', encoding='utf-8', newline='') as p: >> UpdateClientDev.py")
+        os.system("echo        p.write(master) >> UpdateClientDev.py")
+        os.system("echo        p.close() >> UpdateClientDev.py")
+        os.system("echo        u.close() >> UpdateClientDev.py")
+        os.system("echo        os.remove('update.pyd') >> UpdateClientDev.py")
+        os.system("echo print('Updated! Now restarting...') >> UpdateClientDev.py")
+        os.system("echo time.sleep(2) >> UpdateClientDev.py")
+        os.system("echo os.startfile('PyOS.py') >> UpdateClientDev.py")
+        os.system("echo exit() >> UpdateClientDev.py")
+        os.startfile("UpdateClientDev.py")
         pyos_exitscript()
 def pyos_localback():
     if os.path.exists("UpdateClientBK.py"):
@@ -1992,9 +2054,42 @@ def pyos_os_ad():
         if pyos_upd_cc == False:
             print("No update required")
             pyos_os_ad()
+        if config_devmode == "Devmode1":
+            print("Creating version backup...")
+            os.chdir('..')
+            if pyos_fallback == True:
+                os.chdir('..')
+            if os.path.exists(pyos_iden_ver):
+                try:                    
+                    os.chdir(pyos_iden_ver)
+                except:
+                    os.mkdir(pyos_iden_ver)
+                    os.chdir(pyos_iden_ver)                    
+            else:
+                os.mkdir(pyos_iden_ver)
+                os.chdir(pyos_iden_ver)
+            os.chdir('..')
+            os.chdir('..')
+            pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
+            os.system("type PyOS.py >> " + pyos_iden_ver_file)
+            copydir = ("PyOS_Data/" + pyos_iden_ver)
+            try:
+                shutil.copy2(pyos_iden_ver_file, copydir)
+            except:
+                print("Backup failed. Continue update? [y/n]")
+                updcon = input("")
+                if updcon == "y":
+                    pyos_update()
+                else:
+                    print("Cancelled.")
+                    pyos_os_ad()
+            os.remove(pyos_iden_ver_file)
+            pyos_update_dev()
         else:
             print("Creating version backup...")
             os.chdir('..')
+            if pyos_fallback == True:
+                os.chdir('..')
             if os.path.exists(pyos_iden_ver):
                 os.chdir(pyos_iden_ver)
             else:
@@ -2005,7 +2100,16 @@ def pyos_os_ad():
             pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
             os.system("type PyOS.py >> " + pyos_iden_ver_file)
             copydir = ("PyOS_Data/" + pyos_iden_ver)
-            shutil.copy2(pyos_iden_ver_file, copydir)
+            try:
+                shutil.copy2(pyos_iden_ver_file, copydir)
+            except:
+                print("Backup failed. Continue update? [y/n]")
+                updcon = input("")
+                if updcon == "y":
+                    pyos_update()
+                else:
+                    print("Cancelled.")
+                    pyos_os_ad()
             os.remove(pyos_iden_ver_file)
             pyos_update()
     elif os_input == ("upd a"):
@@ -2772,6 +2876,10 @@ PyOS 0.1.2.2 ----
 - Fixed the config system cause I'm an idiot and basically made the whole thing redundant
 - Added some more config file features, now that it works
 - Moved STP to config file
+
+PyOS 0.1.2.4 ----
+- Enabled Devmode for switching to developer updates
+- Further fallback support, including support for upd and set
 :)
 
 ''')
