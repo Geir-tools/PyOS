@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.2_DEV.### #
+###.PyOS.0.1.2.4_DEV1.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -159,11 +159,11 @@ configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0/
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.2 Developer") ##used as title
+pyos_ver = str("PyOS 0.1.2.4 Developer R2") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.2_DEV.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV1.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -625,18 +625,27 @@ def pyos_login():
         newcode = response.read()
         master = newcode.decode()
         tvers = master.split(" ")
-        update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/developer/PyOS.py')
-        response = urllib.request.urlopen(update)
-        newcode = response.read()
-        master = newcode.decode()
-        tvers = master.split(" ")
+        updatedev = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/developer/PyOSDEV.py')
+        responsedev = urllib.request.urlopen(updatedev)
+        newcodedev = responsedev.read()
+        masterdev = newcodedev.decode()
+        tversdev = masterdev.split(" ")
         for number, line in enumerate(tvers):
             tms = str(line)
             break
-        if not tms == pyos_iden_ver:
-            print("An update is available.")
-            global pyos_upd_cc
-            pyos_upd_cc = True
+        for number, line in enumerate(tversdev):
+            tmsdev = str(line)
+            break
+        if not tmsdev == pyos_iden_ver:
+            if config_devmode == "Devmode1":
+                print("A developer update is available.")
+                global pyos_upd_cc
+                pyos_upd_cc = True
+        if config_devmode == "Devmode0":
+            if not tms == pyos_iden_ver:
+                print("An update is available.")
+                global pyos_upd_cc
+                pyos_upd_cc = True
     print("1} Log In as " + pyos_osn)
     print("2} Switch user")
     if config_acccreate == "AccountCreation0":
@@ -1437,6 +1446,38 @@ def pyos_update():
         os.system("echo exit() >> UpdateClient.py")
         os.startfile("UpdateClient.py")
         pyos_exitscript()
+def pyos_update_dev():
+    if os.path.exists("UpdateClientDev.py"):
+        os.startfile("UpdateClientDev.py")
+        pyos_exitscript()
+    else:
+        os.system("echo import time >> UpdateClientDev.py")
+        os.system("echo import os >> UpdateClientDev.py")
+        os.system("echo import urllib.request >> UpdateClientDev.py")
+        os.system("echo os.system('title PyOS Updater') >> UpdateClientDev.py")
+        os.system("echo print('Collecting update from github...') >> UpdateClientDev.py")
+        os.system("echo update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/developer/PyOSDEV.py') >> UpdateClientDev.py")
+        os.system("echo response = urllib.request.urlopen(update) >> UpdateClientDev.py")
+        os.system("echo newcode = response.read() >> UpdateClientDev.py")
+        os.system("echo master = newcode.decode() >> UpdateClientDev.py")
+        os.system("echo with open('update.pyd', 'w') as u: >> UpdateClientDev.py")
+        os.system("echo     u.write(master) >> UpdateClientDev.py")
+        os.system("echo     u.close >> UpdateClientDev.py")
+        os.system("echo print('Updating...') >> UpdateClientDev.py")
+        os.system("echo time.sleep(2) >> UpdateClientDev.py")
+        os.system("echo os.remove('PyOS.py') >> UpdateClientDev.py")
+        os.system("echo with open('update.pyd', 'r') as u: >> UpdateClientDev.py")
+        os.system("echo    with open('PyOS.py', 'w', encoding='utf-8', newline='') as p: >> UpdateClientDev.py")
+        os.system("echo        p.write(master) >> UpdateClientDev.py")
+        os.system("echo        p.close() >> UpdateClientDev.py")
+        os.system("echo        u.close() >> UpdateClientDev.py")
+        os.system("echo        os.remove('update.pyd') >> UpdateClientDev.py")
+        os.system("echo print('Updated! Now restarting...') >> UpdateClientDev.py")
+        os.system("echo time.sleep(2) >> UpdateClientDev.py")
+        os.system("echo os.startfile('PyOS.py') >> UpdateClientDev.py")
+        os.system("echo exit() >> UpdateClientDev.py")
+        os.startfile("UpdateClientDev.py")
+        pyos_exitscript()
 def pyos_localback():
     if os.path.exists("UpdateClientBK.py"):
         os.startfile("UpdateClientBK.py")
@@ -2011,6 +2052,22 @@ def pyos_os_ad():
         if pyos_upd_cc == False:
             print("No update required")
             pyos_os_ad()
+        if config_devmode == "Devmode1":
+            print("Creating version backup...")
+            os.chdir('..')
+            if os.path.exists(pyos_iden_ver):
+                os.chdir(pyos_iden_ver)
+            else:
+                os.mkdir(pyos_iden_ver)
+                os.chdir(pyos_iden_ver)
+            os.chdir('..')
+            os.chdir('..')
+            pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
+            os.system("type PyOS.py >> " + pyos_iden_ver_file)
+            copydir = ("PyOS_Data/" + pyos_iden_ver)
+            shutil.copy2(pyos_iden_ver_file, copydir)
+            os.remove(pyos_iden_ver_file)
+            pyos_update_dev()
         else:
             print("Creating version backup...")
             os.chdir('..')
@@ -2792,9 +2849,9 @@ PyOS 0.1.2.2 ----
 - Added some more config file features, now that it works
 - Moved STP to config file
 
-PyOS 0.1.2.4_DEV ----
-- Added developer mode
-- More support for fallback using set
+PyOS 0.1.2.4_DEV1 ----
+- Update testing for developer mode
+- Added further support for fallback mode
 
 :)
 ''')
