@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.4_DEV1.### #
+###.PyOS.0.1.2.4_DEV2.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -159,11 +159,11 @@ configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0/
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.4 Developer R2") ##used as title
+pyos_ver = str("PyOS 0.1.2.4 Developer R3") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV1.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV2.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -2049,6 +2049,8 @@ def pyos_os_ad():
             print("Updates have been disabled.")
             pyos_os_ad()
         print("Checking for update...")
+        if pyos_fallback == True:
+            os.chdir('..')
         if pyos_upd_cc == False:
             print("No update required")
             pyos_os_ad()
@@ -2056,7 +2058,11 @@ def pyos_os_ad():
             print("Creating version backup...")
             os.chdir('..')
             if os.path.exists(pyos_iden_ver):
-                os.chdir(pyos_iden_ver)
+                try:
+                    os.chdir(pyos_iden_ver)
+                except:
+                    os.mkdir(pyos_iden_ver)
+                    os.chdir(pyos_iden_ver)
             else:
                 os.mkdir(pyos_iden_ver)
                 os.chdir(pyos_iden_ver)
@@ -2064,8 +2070,16 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
             os.system("type PyOS.py >> " + pyos_iden_ver_file)
-            copydir = ("PyOS_Data/" + pyos_iden_ver)
-            shutil.copy2(pyos_iden_ver_file, copydir)
+            try:
+                copydir = ("PyOS_Data/" + pyos_iden_ver)
+                shutil.copy2(pyos_iden_ver_file, copydir)
+            except:
+                print("Backup failed. Update anyway? [y/n]")
+                ins = input("")
+                if ins == "y":
+                    pyos_update_dev()
+                else:
+                    print("Cancelled.")
             os.remove(pyos_iden_ver_file)
             pyos_update_dev()
         else:
@@ -2080,8 +2094,16 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
             os.system("type PyOS.py >> " + pyos_iden_ver_file)
-            copydir = ("PyOS_Data/" + pyos_iden_ver)
-            shutil.copy2(pyos_iden_ver_file, copydir)
+            try:
+                copydir = ("PyOS_Data/" + pyos_iden_ver)
+                shutil.copy2(pyos_iden_ver_file, copydir)
+            except:
+                print("Backup failed. Update anyway? [y/n]")
+                ins = input("")
+                if ins == "y":
+                    pyos_update()
+                else:
+                    print("Cancelled.")
             os.remove(pyos_iden_ver_file)
             pyos_update()
     elif os_input == ("upd a"):
@@ -2091,6 +2113,8 @@ def pyos_os_ad():
         print("Forcing update...")
         os.chdir('..')
         os.chdir('..')
+        if pyos_fallback == True:
+            os.chdir('..')
         pyos_update()
     elif os_input == ("cps"):
         print("")
@@ -2853,6 +2877,9 @@ PyOS 0.1.2.4_DEV1 ----
 - Update testing for developer mode
 - Added further support for fallback mode
 
+PyOS 0.1.2.4 DEV2 ----
+- Fixed update failures
+- We won't talk about me accidentally releaseing a dev update to the main branch
 :)
 ''')
 pyos_boot()
