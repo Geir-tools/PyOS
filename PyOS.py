@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.4_DEV2.### #
+###.PyOS.0.1.2.4.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -159,11 +159,11 @@ configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0/
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.4 Developer R3") ##used as title
+pyos_ver = str("PyOS 0.1.2.4") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV2.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.4.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -188,6 +188,8 @@ if os.path.exists("UpdateClientBK.py"):
     os.remove("UpdateClientBK.py")
 if os.path.exists("update.pyd"):
     os.remove("update.pyd")
+if os.path.exists("UpdateClientDev.py"):
+    os.remove("UpdateClientDev.py")
 def pyos_exitscript():
     if os.path.exists("PyOS.py"):
         try:
@@ -2049,20 +2051,20 @@ def pyos_os_ad():
             print("Updates have been disabled.")
             pyos_os_ad()
         print("Checking for update...")
-        if pyos_fallback == True:
-            os.chdir('..')
         if pyos_upd_cc == False:
             print("No update required")
             pyos_os_ad()
         if config_devmode == "Devmode1":
             print("Creating version backup...")
             os.chdir('..')
+            if pyos_fallback == True:
+                os.chdir('..')
             if os.path.exists(pyos_iden_ver):
-                try:
+                try:                    
                     os.chdir(pyos_iden_ver)
                 except:
                     os.mkdir(pyos_iden_ver)
-                    os.chdir(pyos_iden_ver)
+                    os.chdir(pyos_iden_ver)                    
             else:
                 os.mkdir(pyos_iden_ver)
                 os.chdir(pyos_iden_ver)
@@ -2070,21 +2072,24 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
             os.system("type PyOS.py >> " + pyos_iden_ver_file)
+            copydir = ("PyOS_Data/" + pyos_iden_ver)
             try:
-                copydir = ("PyOS_Data/" + pyos_iden_ver)
                 shutil.copy2(pyos_iden_ver_file, copydir)
             except:
-                print("Backup failed. Update anyway? [y/n]")
-                ins = input("")
-                if ins == "y":
-                    pyos_update_dev()
+                print("Backup failed. Continue update? [y/n]")
+                updcon = input("")
+                if updcon == "y":
+                    pyos_update()
                 else:
                     print("Cancelled.")
+                    pyos_os_ad()
             os.remove(pyos_iden_ver_file)
             pyos_update_dev()
         else:
             print("Creating version backup...")
             os.chdir('..')
+            if pyos_fallback == True:
+                os.chdir('..')
             if os.path.exists(pyos_iden_ver):
                 os.chdir(pyos_iden_ver)
             else:
@@ -2094,16 +2099,17 @@ def pyos_os_ad():
             os.chdir('..')
             pyos_iden_ver_file = str(pyos_iden_ver + ".bkp")
             os.system("type PyOS.py >> " + pyos_iden_ver_file)
+            copydir = ("PyOS_Data/" + pyos_iden_ver)
             try:
-                copydir = ("PyOS_Data/" + pyos_iden_ver)
                 shutil.copy2(pyos_iden_ver_file, copydir)
             except:
-                print("Backup failed. Update anyway? [y/n]")
-                ins = input("")
-                if ins == "y":
+                print("Backup failed. Continue update? [y/n]")
+                updcon = input("")
+                if updcon == "y":
                     pyos_update()
                 else:
                     print("Cancelled.")
+                    pyos_os_ad()
             os.remove(pyos_iden_ver_file)
             pyos_update()
     elif os_input == ("upd a"):
@@ -2113,8 +2119,6 @@ def pyos_os_ad():
         print("Forcing update...")
         os.chdir('..')
         os.chdir('..')
-        if pyos_fallback == True:
-            os.chdir('..')
         pyos_update()
     elif os_input == ("cps"):
         print("")
@@ -2873,13 +2877,10 @@ PyOS 0.1.2.2 ----
 - Added some more config file features, now that it works
 - Moved STP to config file
 
-PyOS 0.1.2.4_DEV1 ----
-- Update testing for developer mode
-- Added further support for fallback mode
-
-PyOS 0.1.2.4 DEV2 ----
-- Fixed update failures
-
+PyOS 0.1.2.4 ----
+- Enabled Devmode for switching to developer updates
+- Further fallback support, including support for upd and set
 :)
+
 ''')
 pyos_boot()
