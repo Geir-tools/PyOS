@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.4_DEV3.### #
+###.PyOS.0.1.2.4_DEV4.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -155,15 +155,15 @@ try:
 except:
     print("[  OK  ] No connection, updates disabled")
     connection = False
-configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0//AccountCreation1//PauseStart0' ##Used for config file
+configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update1//AccountCreation1//PauseStart0' ##Used for config file
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.4 Developer R4") ##used as title
+pyos_ver = str("PyOS 0.1.2.4 Developer R5") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV3.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV4.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -2902,6 +2902,9 @@ PyOS 0.1.2.4 DEV3 ----
 - I added some tiny tiny features
 - A restart now goddamn that took a while
 - Edited some update manager text
+
+PyOS 0.1.2.4 DEV4 ----
+- Config file defaults made updates disabled oOOPS
 
 :)
 ''')
