@@ -1,4 +1,4 @@
-###.PyOS.0.1.2.6_DEV0.### #
+###.PyOS.0.1.2.6_DEV1.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
@@ -155,15 +155,15 @@ try:
 except:
     print("[  OK  ] No connection, updates disabled")
     connection = False
-configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update1//AccountCreation1//PauseStart0' ##Used for config file
+configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin0//Update1//AccountCreation1//PauseStart0' ##Used for config file
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.6 Developer R1") ##used as title
+pyos_ver = str("PyOS 0.1.2.6 Developer R2") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.6_DEV0.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.6_DEV1.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -2921,6 +2921,10 @@ PyOS 0.1.2.4 DEV4 ----
 PyOS 0.1.2.6 DEV0 ----
 - Added print changelog (hello!)
 - Split help into 2 menus
+
+PyOS 0.1.2.6 DEV1 ----
+- Fixed ForceAdmin being true as default
+- whoops
 
 :)
 ''')
