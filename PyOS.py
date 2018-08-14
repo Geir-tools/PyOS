@@ -155,7 +155,7 @@ try:
 except:
     print("[  OK  ] No connection, updates disabled")
     connection = False
-configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update1//AccountCreation1//PauseStart0' ##Used for config file
+configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin0//Update1//AccountCreation1//PauseStart0' ##Used for config file
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
