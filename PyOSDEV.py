@@ -1,8 +1,8 @@
-###.PyOS.0.1.2.4_DEV2.### #
+###.PyOS.0.1.2.4_DEV3.### #
 # TO DO LIST
 #
 # Fix no internet crash                          x
-#   
+# Add more things to the todo list               x
 # 
 #
 #
@@ -159,11 +159,11 @@ configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin1//Update0/
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.4 Developer R3") ##used as title
+pyos_ver = str("PyOS 0.1.2.4 Developer R4") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV2.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.4_DEV3.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -198,6 +198,18 @@ def pyos_exitscript():
     else:
         os.chdir("..")
         pyos_exitscript()
+def pyos_restartscript():
+    if os.path.exists("PyOS.py"):
+        try:
+            os.rename("crashhandler.dll", "crashhandlernull.dll")
+        except:
+            os.startfile("PyOS.py")
+            exit()
+        os.startfile("PyOS.py")
+        exit()
+    else:
+        os.chdir("..")
+        pyos_restartscript()
 def pyos_boot():
     if os.path.exists("PyOS_Data"):
         os.chdir("PyOS_Data")
@@ -467,7 +479,7 @@ def pyos_0114setupuser():
                 print("##################################################")
                 print("                      Py OS                       ")
                 print("                       Sys                        ")
-                print("                      -USR-                       ")
+                print("                      -ADM-                       ")
                 print("##################################################")
                 checkforlog = glob.glob("*.log")
                 if not len(checkforlog) == 0:
@@ -1423,7 +1435,7 @@ def pyos_update():
         os.system("echo import os >> UpdateClient.py")
         os.system("echo import urllib.request >> UpdateClient.py")
         os.system("echo os.system('title PyOS Updater') >> UpdateClient.py")
-        os.system("echo print('Collecting update from github...') >> UpdateClient.py")
+        os.system("echo print('Collecting update from github (SimLoads/PyOS/main/PyOS.py...') >> UpdateClient.py")
         os.system("echo update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/master/PyOS.py') >> UpdateClient.py")
         os.system("echo response = urllib.request.urlopen(update) >> UpdateClient.py")
         os.system("echo newcode = response.read() >> UpdateClient.py")
@@ -1454,8 +1466,8 @@ def pyos_update_dev():
         os.system("echo import time >> UpdateClientDev.py")
         os.system("echo import os >> UpdateClientDev.py")
         os.system("echo import urllib.request >> UpdateClientDev.py")
-        os.system("echo os.system('title PyOS Updater') >> UpdateClientDev.py")
-        os.system("echo print('Collecting update from github...') >> UpdateClientDev.py")
+        os.system("echo os.system('title PyOS Developer Updater') >> UpdateClientDev.py")
+        os.system("echo print('Collecting update from github (SimLoads/PyOS/developer/PyOSDEV.py...') >> UpdateClientDev.py")
         os.system("echo update = urllib.request.Request('https://raw.githubusercontent.com/SimLoads/PyOS/developer/PyOSDEV.py') >> UpdateClientDev.py")
         os.system("echo response = urllib.request.urlopen(update) >> UpdateClientDev.py")
         os.system("echo newcode = response.read() >> UpdateClientDev.py")
@@ -1510,7 +1522,6 @@ def pyos_devconsole():
         print("ske - Skip boot error check")
         print("dsb - Disable user accounts")
         print("acu - Access user account")
-        print("mod - Install mod pkg (not implemented)")
         print("ext - Exit dev mode")
     if pyos_dev == ("ske"):
         pyos_skeset()
@@ -1657,6 +1668,7 @@ def pyos_os_ad():
         print("PyOS Commands")
         print("help - Displays this menu")
         print("ext - Exits")
+        print(" ~~Use 'rst' to restart")
         print("lgt - Logs out of account")
         print("cps - Change Password")
         print("app - Displays list of available apps")
@@ -1740,6 +1752,9 @@ def pyos_os_ad():
             print("Disabled in fallback mode.")
             pyos_os_ad()
         pyos_devconsole()
+    if os_input == ("rst"):
+        print("Restarting...")
+        pyos_restartscript()
     if os_input == ("crd"):
         print(credit)
         pyos_os_ad()
@@ -2880,6 +2895,14 @@ PyOS 0.1.2.4_DEV1 ----
 PyOS 0.1.2.4 DEV2 ----
 - Fixed update failures
 - We won't talk about me accidentally releaseing a dev update to the main branch
+
+PyOS 0.1.2.4 DEV3 ----
+- Uh not much
+- Hello again I'm getting back into developing
+- I added some tiny tiny features
+- A restart now goddamn that took a while
+- Edited some update manager text
+
 :)
 ''')
 pyos_boot()
