@@ -1,8 +1,8 @@
-###.PyOS.0.1.2.6_DEV1.### #
+###.PyOS.0.1.2.6_DEV2.### #
 # TO DO LIST
 #
-# Fix no internet crash                          x
-# Add more things to the todo list               x
+# Secure config file
+# SSH????
 # 
 #
 #
@@ -159,11 +159,11 @@ configbytes = 'PyOS Config//Resize1//Autologin0//Devmode0//Forceadmin0//Update1/
 pyos_fallback = False ##used to determine how the program runs, with or without pycryptodomex essentially
 code = 'pyosenckey' ##used for encryption/decryption - default is 'pyosenckey'. You can change this, but any existing passwords will not work. ##may be redundant now, can't be asked to check if it's still used anywhere
 pyos_upd_cc = False ##used to check for updates 
-pyos_ver = str("PyOS 0.1.2.6 Developer R2") ##used as title
+pyos_ver = str("PyOS 0.1.2.6 Developer R3") ##used as title
 pyos_osn = getpass.getuser() ##default user
 pyos_tempadm = False ##used if user accesses admin account during session
 pyver = platform.python_version() ##used to determine version
-pyos_iden_ver = ("###.PyOS.0.1.2.6_DEV1.###") ##used to check for updates as well
+pyos_iden_ver = ("###.PyOS.0.1.2.6_DEV2.###") ##used to check for updates as well
 pyos_aun = getpass.getuser() ##admin user (changes)
 pyos_permaun = getpass.getuser() ##admin user (permanent)
 password_write = 'pyos_pass_write_to_file_encryption_key' ##written to password files, helps prevent eL1T3 HaX0r5
@@ -1667,7 +1667,7 @@ def pyos_os_ad():
     if os_input == ("help"):
         print("PyOS Commands")
         print("help - Displays this menu")
-        print(" ~~Use 'help 2' for more commands")
+        print(" ~~Use 'help 2' for more.")
         print("ext - Exits")
         print(" ~~Use 'rst' to restart")
         print("lgt - Logs out of account")
@@ -1684,10 +1684,10 @@ def pyos_os_ad():
         print(" ~~Use 'upd a' to force update")
         print("cmd - Command Prompt")
         print("ist - Install Apps")
-        print("run - Run Files")
-        print(" ~~Use 'run [file]' to launch direct")
         pyos_os_ad()
     if os_input == ("help 2"):
+        print("run - Run Files")
+        print(" ~~Use 'run [file]' to launch direct")
         print("lsf - List files")
         print(" ~~Use 'lsf a' to return all filetypes")
         print("log - See admin logs")
@@ -1704,11 +1704,32 @@ def pyos_os_ad():
         print(" ~~Use 'set d' to reset config file")
         print(" ~~Recommended after updates!")
         print("crd - Credits")
-        print("fix - See Changelog")
+        print("rnm - Rename files")
+        print(" ~~Use 'rnm enc [file] to rename encrypted files.")
+        print("fix - See changelog")
         pyos_os_ad()
     if "fix" in os_input:
         print(devmess)
         pyos_os_ad()
+    if "rnm" in os_input:
+        rnmin = os_input.split(" ")
+        if rnmin[1] == "enc":
+            if not len(rnmin) == 4:
+                print("Usage: rnm enc [filename] [new filename]")
+            renameenc = (rnmin[2] + "_enc")
+            renameenc_n = (rnmin[3] + "_enc")
+            os.rename(renameenc, renameenc_n)
+            print("Renamed.")
+            pyos_os_ad()
+        else:
+            if not len(rnmin) == 3:
+                print("Usage: rnm [filename] [new filename]")
+            if "enc" in rnmin[1]:
+                print("Use rnm enc to rename encrypted files.")
+                pyos_os_ad()
+            os.rename(rnmin[1], rnmin[2])
+            print("Renamed.")
+            pyos_os_ad()
     if "ret" in os_input:
         osin = os_input.split(" ")
         if not len(osin) == 2:
@@ -2291,15 +2312,26 @@ def pyos_os_ad():
                     pyos_encdir = (pyos_enc_file + "_enc")
                     if os.path.exists(pyos_encdir):
                         print("Encrypted file already exists!")
-                        while True:
-                            encr = random.randint(1, 99)
-                            encr = str(encr)
-                            pyos_encdir = (encr + pyos_encdir)
-                            if os.path.exists(pyos_encdir):
-                                continue
-                            break
-                        print("Encrypting as " + pyos_encdir)
-                    os.mkdir(pyos_encdir)
+                        print("Enter a new file name...")
+                        newname = input("")
+                        if newname == (""):
+                            print("Name empty. Choosing a random name...")
+                            while True:
+                                encr = random.randint(1, 99)
+                                encr = str(encr)
+                                pyos_encdir = (encr + pyos_encdir)
+                                if os.path.exists(pyos_encdir):
+                                    continue
+                                break
+                            print("Encrypting as " + pyos_encdir)
+                        else:
+                            pyos_encdir = newname
+                    try:
+                        os.mkdir(pyos_encdir)
+                    except:
+                        print("Failed to create encryption directory.")
+                        print("Ensure nothing is blocking the process.")
+                        pyos_os_ad()
                     with open(pyos_enc_file_txt, 'r') as x:
                         shutil.copy2(pyos_enc_file_txt, pyos_encdir)
                     x.close()
@@ -2902,7 +2934,6 @@ PyOS 0.1.2.4 ----
 
 PyOS 0.1.2.4_DEV1 ----
 - Update testing for developer mode
-- Added further support for fallback mode
 
 PyOS 0.1.2.4 DEV2 ----
 - Fixed update failures
@@ -2918,6 +2949,9 @@ PyOS 0.1.2.4 DEV3 ----
 PyOS 0.1.2.4 DEV4 ----
 - Config file defaults made updates disabled oOOPS
 
+PyOS 0.1.2.6 ----
+- Pushed all those developer updates
+
 PyOS 0.1.2.6 DEV0 ----
 - Added print changelog (hello!)
 - Split help into 2 menus
@@ -2925,6 +2959,10 @@ PyOS 0.1.2.6 DEV0 ----
 PyOS 0.1.2.6 DEV1 ----
 - Fixed ForceAdmin being true as default
 - whoops
+
+PyOS 0.1.2.6 DEV2 ----
+- Added rename feature
+- Modified duplicate file naming system for encryption
 
 :)
 ''')
