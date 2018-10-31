@@ -1,7 +1,7 @@
 # As of 31st October 2018, PyOS is no longer in development.
 ## A true Python multitool that will be left for dead thanks to awful, awful design and over 2000 lines to ammend.
 
-My largest project to date, PyOS was designed to be an all in one powerhouse of many different Python features, ranging from basic math functions to voice input to high security UAC and password encryption. I'm sure it would be so much more useful if the code was closed-source, but hey, the idea was there. Maybe one day I'll come back to this and convert it so it can run on >Python 3.4, but for now, it's time to put PyOS to sleep. 
+My largest project to date, PyOS was designed to be an all in one powerhouse of many different Python features, ranging from basic math functions to voice input to high security UAC and password encryption. I'm sure it would be so much more useful if the code was closed-source, but hey, the idea was there. Unfortunately, due to a heavy dependancy on global variables and local functions, it's totally stuck in an old era of Python. Maybe one day I'll come back to this and convert it so it can run on >Python 3.4, but for now, it's time to put PyOS to sleep. 
 
 ## PyOS
 *Welcome to PyOS!*
