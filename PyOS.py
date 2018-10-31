@@ -1,8 +1,8 @@
 ###.PyOS.0.1.2.6.### #
 # TO DO LIST
-#
-# Fix no internet crash                          x
-# Add more things to the todo list               x
+# Update to > Python 3.4, maybe one day :)
+# 
+# 
 # 
 #
 #
